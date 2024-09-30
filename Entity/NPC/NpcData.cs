@@ -1,0 +1,48 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+[Serializable]
+public class NpcData
+{
+    [SerializeField]
+    private int _id;
+    /***************************************************************
+     * [ 고유 번호 ]
+     * 
+     * 플레이어와의 상호작용에 쓰일 고유 번호
+     * 캐릭터 번호 3자리 + 순서번호 3자리로 구성
+     ****************************************************************/
+    public int Id
+    {
+        get
+        {
+            // 해당 npc가 대사를 가지고 있지 않은 경우 임시적으로 0번을 리턴
+            if (_id != 0 && !TextScriptResource.Instance.HasLines(_id))
+            {
+                return 0;
+            }
+
+            return _id;
+        }
+    }
+
+    private List<Line> _lines;
+    public List<Line> Lines
+    {
+        get
+        {
+            if (_lines != null) return _lines;
+
+            // 해당 npc의 id에 해당하는 대사가 존재할 경우에만 담기
+            if (TextScriptResource.Instance.HasLines(_id))
+            {
+                TextScript script = TextScriptResource.Instance.CurrentScript;
+
+                _lines = script.GetLines(_id);
+            }
+
+            return _lines;
+        }
+    }
+}
