@@ -4,6 +4,7 @@ public class PlayerManager : MonoBehaviour
 {
     // 이동 제어 변수
     private Vector2 moveVec;
+    private bool isRunKeyPressed;
     private bool isRunning;
 
     [Header("참조 스크립트")]
@@ -14,7 +15,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
 
     [Header("이동속도")]
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float hMoveSpeed;
+    [SerializeField] private float vMoveSpeed;
+    [SerializeField] private float hvMoveSpeed;
     [SerializeField] private float runSpeed;
 
     /************************************************************
@@ -31,10 +34,16 @@ public class PlayerManager : MonoBehaviour
         SetPlayerMoveAnim(moveVec);
     }
 
-    public void RunningPlayer()
+    public void SetRunning(bool isRunning)
     {
-        // 달리기 활성화
-        isRunning = true;
+        // 달리기 키 상태 변경
+        isRunKeyPressed = isRunning;
+
+        // 달리기 키를 눌렀다면 달리는 상태로 변경
+        if (isRunKeyPressed)
+        {
+            this.isRunning = true;
+        }
     }
 
     private void SetPlayerMoveAnim(Vector2 angle)
@@ -71,11 +80,18 @@ public class PlayerManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float speed = isRunning ? runSpeed : moveSpeed;
-        rigid.velocity = moveVec.normalized * speed * Time.deltaTime;
-
         // 걷기 체크
         CheckingWalk(moveVec);
+
+        float speed = isRunning ? runSpeed : GetMoveSpeed(moveVec);
+        rigid.velocity = moveVec.normalized * speed * Time.deltaTime;
+    }
+
+    private float GetMoveSpeed(Vector2 moveVec)
+    {
+        if (moveVec.x != 0 && moveVec.y == 0) return hMoveSpeed;
+        else if (moveVec.x == 0 && moveVec.y != 0) return vMoveSpeed;
+        else return hvMoveSpeed;
     }
 
     private void CheckingWalk(Vector2 moveVec)
@@ -83,10 +99,10 @@ public class PlayerManager : MonoBehaviour
         float absX = Mathf.Abs(moveVec.x);
         float absY = Mathf.Abs(moveVec.y);
 
-        bool isWalkSpeed = absX <= 0.5f && absY <= 0.5f;
+        bool isWalkAxis = absX <= 0.5f && absY <= 0.5f;
 
-        // 움직임 정도가 일정 이상이면 계속해서 달리기 유지
-        if (isRunning && isWalkSpeed)
+        // 달리기 키가 눌려져 있지 않은 상태에서 조이스틱 기울기가 걷는 정도일 경우 달리기 종료
+        if (!isRunKeyPressed && isWalkAxis)
         {
             isRunning = false;
         }

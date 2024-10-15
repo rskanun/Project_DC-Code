@@ -60,21 +60,44 @@ public class ControlContext : ScriptableObject
         get { return _currentState; }
     }
 
-    public bool NoKeyDown
+    private MainInput _keyInput;
+    public MainInput KeyInput
     {
-        set { _noKeyDown = value; }
+        get
+        {
+            if (_keyInput == null)
+                _keyInput = new MainInput();
+
+            return _keyInput;
+        }
     }
-    private bool _noKeyDown;
 
-
-    public void OnKeyPressed()
+    private bool _keyBlock;
+    public bool KeyBlock
     {
-        if (_noKeyDown == false)
-            CurrentState?.OnControlKeyPressed();
+        private set { _keyBlock = value; }
+        get { return _keyBlock; }
     }
 
     public void SetState(IControlState state)
     {
+        // 기존 컨트롤러 연결 끊기
+        CurrentState?.OnDisconnected();
+
+        // 새 컨트롤러 연결
         CurrentState = state;
+        CurrentState?.OnConnected();
+    }
+
+    public void OnKeyLock()
+    {
+        KeyBlock = true;
+        KeyInput.Disable();
+    }
+
+    public void OnKeyUnlock()
+    {
+        KeyBlock = false;
+        KeyInput.Enable();
     }
 }

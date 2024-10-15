@@ -1,4 +1,5 @@
 public interface IControlState
 {
-    public void OnControlKeyPressed();
+    public void OnConnected();
+    public void OnDisconnected();
 }

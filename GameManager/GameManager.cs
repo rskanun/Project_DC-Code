@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private float timer;
+
     [Header("참조 데이터")]
     [SerializeField] private GameData gameData;
 
@@ -17,12 +19,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         StartGame();
-    }
-
-    private void Update()
-    {
-        // 현재 설정된 컨트롤러의 키 입력 받기
-        controller.OnKeyPressed();
     }
 
     /************************************************************

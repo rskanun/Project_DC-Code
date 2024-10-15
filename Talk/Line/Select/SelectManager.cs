@@ -6,20 +6,22 @@ public class SelectManager : MonoBehaviour
     [Header("참조 스크립트")]
     [SerializeField] private SelectUI ui;
 
-    private bool isSelectOpen;
+    private bool _isSelectOpen;
     public bool IsSelectOpen
     {
-        get { return isSelectOpen; }
+        private set { _isSelectOpen = value; }
+        get { return _isSelectOpen; }
     }
 
     public void OpenSelect(Select select, Action<string> onClickHandler)
     {
-        isSelectOpen = true;
+        IsSelectOpen = true;
 
         // 선택창 활성화
         string[] options = select.Options.ToArray();
         ui.OpenSelection(options, (option) =>
         {
+            // 선택 시 발생할 handler 실행
             onClickHandler?.Invoke(option);
 
             // 선택 후 창 닫기
@@ -32,6 +34,6 @@ public class SelectManager : MonoBehaviour
         ui.CloseSelection();
         ui.DestroySelect();
 
-        isSelectOpen = false;
+        IsSelectOpen = false;
     }
 }

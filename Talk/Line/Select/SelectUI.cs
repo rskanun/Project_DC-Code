@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SelectUI : MonoBehaviour
@@ -66,6 +67,7 @@ public class SelectUI : MonoBehaviour
 
     private void CreateButtons(string[] options, Action<string> onClickAction)
     {
+        bool isSelected = false;
         foreach (string option in options)
         {
             // 버튼 오브젝트 추가
@@ -80,6 +82,14 @@ public class SelectUI : MonoBehaviour
 
             // 추후 파괴를 위해 리스트에 추가
             optionList.Add(obj);
+
+            // 아직 선택된 버튼이 없을 경우
+            if (isSelected == false)
+            {
+                // 해당 선택지 버튼을 선택
+                isSelected = true;
+                EventSystem.current.SetSelectedGameObject(obj);
+            }
         }
     }
 
