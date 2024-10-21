@@ -1,12 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractManager : MonoBehaviour
 {
-    [Header("참조 스크립트")]
-    [SerializeField] private TalkManager talkManager;
-
-    // 현재 상호작용 가능한 NPC
-    private Npc npc;
+    // 상호작용이 가능한 오브젝트 목록
+    private List<InteractableObject> interactObjs = new List<InteractableObject>();
 
     public void RotateEyes(Vector2 direction)
     {
@@ -21,33 +19,44 @@ public class InteractManager : MonoBehaviour
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
-    public void OnTalking()
+    public void OnInteract(PlayerManager player)
     {
-        // 상호작용 할 오브젝트가 없다면 실행 X
-        if (npc == null) return;
+        if (interactObjs.Count <= 0)
+        {
+            // 상호작용 할 오브젝트가 없다면 무시
+            return;
+        }
 
-        talkManager.StartTalk(npc);
+        // 가장 처음 접근한 오브젝트와 상호작용
+        interactObjs[0].OnInteract(player);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 맞닿은 오브젝트가 NPC일 시
-        if (collision.CompareTag("NPC"))
+        // 맞닿은 오브젝트가 상호작용 가능할 경우
+        if (collision.CompareTag("Interactable Object"))
         {
-            // 해당 NPC의 정보를 가져오기
-            npc = collision.gameObject.GetComponent<Npc>();
-            Debug.Log("keydown spacebar");
+            // 해당 오브젝트의 정보를 가져오기
+            InteractableObject interactObj = collision.gameObject.GetComponent<InteractableObject>();
+            interactObjs.Add(interactObj);
+
+            Debug.Log($"keydown {KeyResource.Instance.Interact}");
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        // 맞닿은 오브젝트가 NPC일 시
-        if (collision.CompareTag("NPC"))
+        if (collision.CompareTag("Interactable Object"))
         {
-            // NPC의 정보를 초기화
-            npc = null;
-            Debug.Log("exit");
+            InteractableObject obj = collision.GetComponent<InteractableObject>();
+
+            // 범위에서 벗어난 오브젝트가 현재 상호작용 가능한 오브젝트일 경우
+            if (interactObjs.Contains(obj))
+            {
+                // 오브젝트의 정보를 초기화
+                interactObjs.Remove(obj);
+                Debug.Log($"{collision.name} exit");
+            }
         }
     }
 }

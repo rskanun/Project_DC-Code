@@ -11,27 +11,22 @@ public class TalkManager : MonoBehaviour
     [SerializeField] private EventManager eventManager;
     [SerializeField] private PlayerController playerController;
 
+    [Space]
     // 현재 라인 진행 상황
-    private bool isPrinting;
-    private bool isTalking;
-    private int lineNum;
+    [SerializeField] private bool isPrinting;
+    [SerializeField] private bool isTalking;
+    [SerializeField] private int lineNum;
 
     // Select 관련 변수
     private Stack<Select> selectStack;
 
     public void StartTalk(Npc npc)
     {
-        if (npc.isInteractive == false)
-        {
-            // 상호작용이 불가능한 npc일 경우 대화 실행 X
-            return;
-        }
-
         // 대화 전용 컨트롤러로 변경
         ControlContext.Instance.SetState(controller);
 
         // 대화 처음 시작 시 해당되는 대화목록 가져오기
-        List<Line> lines = npc.getLines();
+        List<Line> lines = npc.GetLines();
         selectStack = new Stack<Select>();
 
         isTalking = true;

@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("참조 스크립트")]
     [SerializeField] private InteractManager interactManager;
+    [SerializeField] private TalkManager talkManager;
 
     [Header("플레이어 구성 요소")]
     [SerializeField] private Rigidbody2D rigid;
@@ -106,5 +107,16 @@ public class PlayerManager : MonoBehaviour
         {
             isRunning = false;
         }
+    }
+
+    /************************************************************
+     * [상호작용]
+     * 
+     * 플레이어와의 상호작용 제어
+     ************************************************************/
+
+    public void OnTalking(Npc npc)
+    {
+        talkManager.StartTalk(npc);
     }
 }

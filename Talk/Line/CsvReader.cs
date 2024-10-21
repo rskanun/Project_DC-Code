@@ -83,10 +83,8 @@ public class CsvReader
         CsvFile result = new CsvFile();
         string[] lines = csvFile.text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-        int count = 0;
         foreach (string line in lines)
         {
-            Debug.Log($"{count++}: {line}");
             string[] lineCells = SplitLine(line);
 
             result.AddLineCells(lineCells);

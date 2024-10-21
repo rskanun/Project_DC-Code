@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour, IControlState
 {
 
     [Header("참조 스크립트")]
-    [SerializeField] private PlayerManager playerManager;
+    [SerializeField] private PlayerManager player;
     [SerializeField] private InteractManager interactManager;
 
     private MainInput.PlayerActions input;
@@ -55,12 +55,12 @@ public class PlayerController : MonoBehaviour, IControlState
         Vector2 vec = input.Movement.ReadValue<Vector2>();
 
         // 해당 벡터로 플레이어 움직이기
-        playerManager.MovingPlayer(vec);
+        player.MovingPlayer(vec);
     }
 
     private void OnRunKeyPressed(InputAction.CallbackContext context)
     {
-        playerManager.SetRunning(input.Running.WasPressedThisFrame());
+        player.SetRunning(input.Running.WasPressedThisFrame());
     }
 
     /************************************************************
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour, IControlState
 
     private void OnInteractKeyPressed(InputAction.CallbackContext context)
     {
-        interactManager.OnTalking();
+        interactManager.OnInteract(player);
     }
 
     /************************************************************
