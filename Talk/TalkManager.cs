@@ -31,7 +31,7 @@ public class TalkManager : MonoBehaviour
         ControlContext.Instance.SetState(controller);
 
         // 대화 처음 시작 시 해당되는 대화목록 가져오기
-        List<Line> lines = npc.getLines();
+        List<Line> lines = npc.GetLines();
         selectStack = new Stack<Select>();
 
         isTalking = true;

@@ -8,12 +8,12 @@ public class Npc : MonoBehaviour
 
     public bool isInteractive => npc.Lines != null;
 
-    public int getID()
+    public int GetID()
     {
         return npc.Id;
     }
 
-    public List<Line> getLines()
+    public List<Line> GetLines()
     {
         return npc.Lines;
     }

@@ -89,4 +89,9 @@ public class ReadOnlyGameData : ScriptableObject
     {
         get { return Origin.Chapter; }
     }
+
+    public MapData CurrentMap
+    {
+        get { return Origin.CurrentMap; }
+    }
 }
