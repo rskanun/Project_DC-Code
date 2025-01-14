@@ -17,22 +17,23 @@ public class QuestManager
         }
     }
 
-    private QuestData _currentQuest;
+    private QuestData currentQuest;
 
     public void AcceptQuest(QuestData quest)
     {
-        if (quest != null)
-            _currentQuest = quest;
+        if (quest == null) return;
+
+        currentQuest = quest;
     }
 
     public void CancelCurrentQuest()
     {
-        _currentQuest = null;
+        currentQuest = null;
     }
 
     public string GetQuestDescription()
     {
-        return _currentQuest.description;
+        return currentQuest.description;
     }
 
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 public class PortalData
 {
     [SerializeField]
-    private string _teleportScene;  // 이동될 씬 이름
-    public string TeleportScene
+    private MapData _linkedMap;  // 이동될 씬 이름
+    public MapData LinkedMap
     {
-        get { return _teleportScene; }
+        get { return _linkedMap; }
     }
 }

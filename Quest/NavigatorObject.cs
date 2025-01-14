@@ -6,7 +6,20 @@ public class NavigatorObject : MonoBehaviour
 
     public void SetTarget(GameObject targetObject)
     {
+        if (targetObject == null)
+        {
+            // 빈 오브젝트의 경우 받지 않음
+            return;
+        }
+
         this.targetObject = targetObject;
+    }
+
+    public void OnComplete()
+    {
+        // 목표에 도달하게 되면 타겟을 리셋하고서 스스로 꺼짐
+        targetObject = null;
+        gameObject.SetActive(false);
     }
 
     private void Update()

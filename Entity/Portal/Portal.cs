@@ -7,10 +7,10 @@ public class Portal : MonoBehaviour
     private PortalData portal;
 
     public bool isUsabled
-        => SceneUtility.GetBuildIndexByScenePath(portal.TeleportScene) != -1;
+        => portal.LinkedMap.Scene != null;
 
-    public string GetTeleportScene()
+    public MapData GetLinkedMap()
     {
-        return portal.TeleportScene;
+        return portal.LinkedMap;
     }
 }
