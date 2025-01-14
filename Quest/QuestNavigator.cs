@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,59 +9,78 @@ public class QuestNavigator : MonoBehaviour
 
     private Queue<string> questPath;
     private string targetMap;
-    private int targetNpcID;
+    private int targetID;
 
     public void OnStart(string mapName, int npcID)
     {
         // 목표 맵과 NPC 설정
         targetMap = mapName;
-        targetNpcID = npcID;
+        targetID = npcID;
 
-        // 경로 탐색
-        MapData currentMapData = ReadOnlyGameData.Instance.CurrentMap;
-        List<string> path = SearchShortestPath(currentMapData, mapName);
-
-        // 경로 탐색에 실패했을 경우
-        if (path == null)
+        // 경로 업데이트
+        if (UpdatePath(mapName) == false)
         {
-            OnStop(); // 네비 종료
+            // 업데이트에 실패했을 경우 네비게이션 종료
+            OnStop();
             return;
         }
 
-        // 경로 설정
-        questPath = new Queue<string>(path);
+        // 네비게이션 설정 및 작동
+        SetupNavigation(questPath, npcID);
+    }
 
-        // 목표 오브젝트 설정
-        GameObject targetObj = GetTargetObj(questPath, npcID);
+    public void OnResearch()
+    {
+        // 경로 업데이트
+        if (UpdatePath(targetMap) == false)
+        {
+            // 업데이트에 실패했을 경우 네비게이션 종료
+            OnStop();
+            return;
+        }
 
-        // 네비게이션 작동
-        naviObj.gameObject.SetActive(true);
-        naviObj.SetTarget(targetObj);
+        // 네비게이션 설정 및 작동
+        SetupNavigation(questPath, targetID);
     }
 
     public void OnStop()
     {
         // 목표 도달 시 목표 맵과 NPC 초기화
         targetMap = null;
-        targetNpcID = 0;
+        targetID = 0;
+
+        // 경로 초기화
+        questPath.Clear();
 
         // 네비게이션 종료
         naviObj.OnComplete();
     }
 
-    public void OnResearch()
+    private bool UpdatePath(string mapName)
     {
+        // 경로 탐색
+        MapData currentMapData = ReadOnlyGameData.Instance.CurrentMap;
+        List<string> path = SearchShortestPath(currentMapData, mapName);
 
+        // 경로 탐색에 성공했을 경우
+        if (path != null)
+        {
+            // 경로 설정 후 성공 리턴
+            questPath = new Queue<string>(path);
+            return true;
+        }
+
+        return false;
     }
 
-    private void UpdatePath(string targetMap)
+    private void SetupNavigation(Queue<string> path, int targetID)
     {
-        // 경로 재탐색
-        MapData currentMapData = ReadOnlyGameData.Instance.CurrentMap;
-        List<string> path = SearchShortestPath(currentMapData, targetMap);
+        // 목표 오브젝트 설정
+        GameObject targetObj = GetTargetObj(path, targetID);
 
-        // 경로 재설정
-        questPath = new Queue<string>(path);
+        // 네비게이션 작동
+        naviObj.gameObject.SetActive(true);
+        naviObj.SetTarget(targetObj);
     }
 
     /************************************************************
@@ -134,29 +154,23 @@ public class QuestNavigator : MonoBehaviour
 
     private GameObject SearchNPC(int id)
     {
-        // 현재 맵(씬)에 있는 NPC 탐색
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("NPC"))
-        {
-            Npc npc = obj.GetComponent<Npc>();
-            if (npc != null && npc.GetID() == id)
-            {
-                // 해당 NPC의 아이디값이 찾고 있는 npc와 동일할 경우 리턴
-                return obj;
-            }
-        }
-
-        return null;
+        return SearchObject<Npc>("NPC", npc => npc.GetID() == id);
     }
 
     private GameObject SearchPortal(string linkedMap)
     {
-        // 현재 맵(씬)에 있는 포탈 탐색
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Portal"))
+        return SearchObject<Portal>("Portal", portal => portal.GetLinkedMap().name == linkedMap);
+    }
+
+    private GameObject SearchObject<T>(string tag, Func<T, bool> condition) where T : Component
+    {
+        // 현재 맵(씬)에 있는 오브젝트 탐색
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag(tag))
         {
-            Portal portal = obj.GetComponent<Portal>();
-            if (portal != null && portal.GetLinkedMap().Name == linkedMap)
+            T objComponent = obj.GetComponent<T>();
+            if (objComponent != null && condition(objComponent))
             {
-                // 해당 포탈과 이어진 맵이 경로상 다음 맵일 경우 리턴
+                // 해당 오브젝트가 조건에 만족하는 경우 리턴
                 return obj;
             }
         }

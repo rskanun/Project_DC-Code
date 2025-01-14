@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 public class MapData : ScriptableObject
 {
+    [ReadOnly, SerializeField]
     private string _id;
     public string ID
     {
         get
         {
-            // ID 값이 생성되지 않은 맵 데이터일 경우
-            if (string.IsNullOrEmpty(_id))
+            // ID 값이 생성되지 않은 맵 데이터 혹은 중복된 ID값이 있는 경우 새로운 아이디 값 배정
+            if (string.IsNullOrEmpty(_id) && MapDatabase.Instance.FindMap(_id) != null)
             {
                 // 앞의 12자리는 생성 시간 값의 16진수 변환 값
                 string timeBaseHex = DateTime.UtcNow.Ticks.ToString("x").Substring(0, 12);
@@ -22,12 +22,6 @@ public class MapData : ScriptableObject
 
                 // 24자리의 랜덤한 값을 반환
                 _id = timeBaseHex + guidHex;
-            }
-
-            // 중복된 ID 값이 있는 지 검사
-            if (MapDatabase.Instance.FindMap(_id) != null)
-            {
-
             }
 
             return _id;

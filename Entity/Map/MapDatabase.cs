@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -76,26 +74,24 @@ public class MapDatabase : ScriptableObject
         Selection.activeObject = newData;
     }
 
-    [ContextMenu("Reload")]
+    [ContextMenu("Reload Data")]
     public void Reload()
     {
-        OnValidate();
+        // 폴더 내의 모든 에셋 경로 가져오기
+        string[] guids = AssetDatabase.FindAssets("t:MapData", new[] { FILE_DIRECTORY });
+
+        // GUID를 실제 Asset 경로로 변환 후, MapData 오브젝트 로드
+        MapData[] mapDataAssets = guids
+            .Select(guid => AssetDatabase.LoadAssetAtPath<MapData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(mapData => mapData != null)
+            .ToArray();
+
+        // 로드한 에셋들로 새로운 리스트 생성
+        mapDatas = new HashSet<MapData>(mapDataAssets);
     }
 
     public MapData FindMap(string id)
     {
-        List<MapData> findMaps = mapDatas.Where(data => data.ID == id)
-            .ToList();
-
-        return findMaps[0];
-    }
-
-    private void OnValidate()
-    {
-        Debug.Log($"Load Map({mapDatas.Count}) : ");
-        foreach (MapData data in mapDatas)
-        {
-            Debug.Log(data.name);
-        }
+        return mapDatas.FirstOrDefault(data => data.ID == id);
     }
 }
