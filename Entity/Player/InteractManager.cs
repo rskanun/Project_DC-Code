@@ -8,6 +8,9 @@ public class InteractManager : MonoBehaviour
     // 현재 상호작용 가능한 NPC
     private Npc npc;
 
+    // 임시 포탈
+    private Portal portal;
+
     public void RotateEyes(Vector2 direction)
     {
         if (direction == Vector2.zero)
@@ -26,7 +29,33 @@ public class InteractManager : MonoBehaviour
         // 상호작용 할 오브젝트가 없다면 실행 X
         if (npc == null) return;
 
+        // 대화 시작
         talkManager.StartTalk(npc);
+
+        // 퀘스트 완료 여부 체크
+        // #상호작용 성공 시 퀘스트 완료 여부 체크로 옮길것!!!
+        CheckToQuest();
+    }
+
+    private void CheckToQuest()
+    {
+        QuestData curQuest = QuestManager.Instance.CurrentQuest;
+
+        if (curQuest.ObjectID == npc.GetID())
+        {
+            // 퀘스트 대상과 상호작용한 대상일 일치하면 퀘스트 완료
+            QuestManager.Instance.CompleteCurrentQuest();
+        }
+    }
+
+    public void OnEndTalk()
+    {
+        // 상호작용 NPC가 수행 가능한 퀘스트를 가지고 있는 경우
+        if (npc is QuestNpc questNpc && questNpc.GetQuest() is QuestData nextQuest)
+        {
+            // 해당 퀘스트를 다음 퀘스트로 설정
+            QuestManager.Instance.AcceptQuest(nextQuest);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

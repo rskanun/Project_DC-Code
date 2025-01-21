@@ -1,8 +1,4 @@
-public class QuestData
-{
-    public string description;  // 퀘스트 내용
-    public string pos;          // 위치값
-}
+using System.Collections.Generic;
 
 public class QuestManager
 {
@@ -17,23 +13,32 @@ public class QuestManager
         }
     }
 
-    private QuestData currentQuest;
+    private HashSet<QuestData> completedQuests = new HashSet<QuestData>();
+    private QuestData _currentQuest;
+    public QuestData CurrentQuest { get => _currentQuest; }
 
     public void AcceptQuest(QuestData quest)
     {
-        if (quest == null) return;
+        if (quest != null)
+        {
+            _currentQuest = quest;
 
-        currentQuest = quest;
+            // 퀘스트 변경 알림
+            GameEventManager.Instance.NotifyQuestUpdateEvent();
+        }
     }
 
-    public void CancelCurrentQuest()
+    public void CompleteCurrentQuest()
     {
-        currentQuest = null;
+        completedQuests.Add(_currentQuest); // 완료 목록에 추가
+        _currentQuest = null; // 이후 현재 퀘스트 초기화
+
+        // 퀘스트 변경 알림
+        GameEventManager.Instance.NotifyQuestUpdateEvent();
     }
 
-    public string GetQuestDescription()
+    public bool IsCompletedQuest(QuestData quest)
     {
-        return currentQuest.description;
+        return completedQuests.Contains(quest);
     }
-
 }

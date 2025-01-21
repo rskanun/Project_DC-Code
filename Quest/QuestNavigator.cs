@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class QuestNavigator : MonoBehaviour
 {
@@ -9,16 +10,40 @@ public class QuestNavigator : MonoBehaviour
 
     private Queue<string> questPath;
     private string targetMap;
-    private int targetID;
+    private int targetObj;
 
-    public void OnStart(string mapName, int npcID)
+    public MapData curMap;
+
+    private void OnEnable()
+    {
+        // 씬 로드 이벤트 등록
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        // 씬 로드 이벤트 해제
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 씬 이동이 일어난 경우 맵이 있는 지 확인
+        if (MapManager.FindMapDataCurrentScene() != null)
+        {
+            // 맵이 맞다면 맵 이동 함수를 실행
+            OnMoveMap();
+        }
+    }
+
+    public void OnStart(string mapID, int objID)
     {
         // 목표 맵과 NPC 설정
-        targetMap = mapName;
-        targetID = npcID;
+        targetMap = mapID;
+        targetObj = objID;
 
         // 경로 업데이트
-        if (UpdatePath(mapName) == false)
+        if (UpdatePath(mapID) == false)
         {
             // 업데이트에 실패했을 경우 네비게이션 종료
             OnStop();
@@ -26,11 +51,19 @@ public class QuestNavigator : MonoBehaviour
         }
 
         // 네비게이션 설정 및 작동
-        SetupNavigation(questPath, npcID);
+        SetupNavigation(questPath, objID);
+    }
+
+    public void OnMoveMap()
+    {
+        // 플레이어가 맵을 이동한 경우
+        // 경로를 이탈했는지 확인
+        //if (questPath.Count < 1 ||)
     }
 
     public void OnResearch()
     {
+        // 지정된 경로에서 벗어난 경우
         // 경로 업데이트
         if (UpdatePath(targetMap) == false)
         {
@@ -40,14 +73,20 @@ public class QuestNavigator : MonoBehaviour
         }
 
         // 네비게이션 설정 및 작동
-        SetupNavigation(questPath, targetID);
+        SetupNavigation(questPath, targetObj);
     }
 
-    public void OnStop()
+    public void OnAchieve()
+    {
+        // 현재 네비게이션에 설정된 목표에 도달한 경우
+        // 목표한 오브젝트에 도달했는지 먼저 확인
+    }
+
+    private void OnStop()
     {
         // 목표 도달 시 목표 맵과 NPC 초기화
         targetMap = null;
-        targetID = 0;
+        targetObj = 0;
 
         // 경로 초기화
         questPath.Clear();
@@ -56,11 +95,11 @@ public class QuestNavigator : MonoBehaviour
         naviObj.OnComplete();
     }
 
-    private bool UpdatePath(string mapName)
+    private bool UpdatePath(string mapID)
     {
         // 경로 탐색
         MapData currentMapData = ReadOnlyGameData.Instance.CurrentMap;
-        List<string> path = SearchShortestPath(currentMapData, mapName);
+        List<string> path = SearchShortestPath(currentMapData.ID, mapID);
 
         // 경로 탐색에 성공했을 경우
         if (path != null)
@@ -73,14 +112,19 @@ public class QuestNavigator : MonoBehaviour
         return false;
     }
 
-    private void SetupNavigation(Queue<string> path, int targetID)
+    private void SetupNavigation(Queue<string> path, int objID)
     {
         // 목표 오브젝트 설정
-        GameObject targetObj = GetTargetObj(path, targetID);
+        GameObject targetObj = GetNextTarget(path, objID);
 
         // 네비게이션 작동
         naviObj.gameObject.SetActive(true);
         naviObj.SetTarget(targetObj);
+    }
+
+    private void UpdateNavigation()
+    {
+
     }
 
     /************************************************************
@@ -89,49 +133,42 @@ public class QuestNavigator : MonoBehaviour
     * BFS를 사용한 최단 경로 탐색 및 다음 이동 목표 설정
     ************************************************************/
 
-    private List<string> SearchShortestPath(MapData currentMapData, string targetMap)
+    private List<string> SearchShortestPath(string startMapID, string targetMapID)
     {
         Queue<MapNode> mapQueue = new Queue<MapNode>();
         HashSet<string> visitMaps = new HashSet<string>();
 
         // 노드 초기화
-        string currentMap = currentMapData.Name;
-        MapNode firstNode = new MapNode(currentMap, new List<string> { currentMap });
+        MapNode firstNode = new MapNode(startMapID, new List<string> { startMapID });
         mapQueue.Enqueue(firstNode);
 
         // BFS 최단경로 탐색
         while (mapQueue.Count > 0)
         {
             MapNode node = mapQueue.Dequeue();
-            string mapName = node.MapName;
+            string mapID = node.MapID;
 
             // 목표 도달 시
-            if (mapName == targetMap)
+            if (mapID == targetMapID)
             {
-                // 테스트 디버깅
-                Debug.Log("서칭된 최단 경로: " + string.Join(" -> ", node.Path));
                 // 현재 경로 리턴
                 return node.Path;
             }
 
             // 방문 안 한 맵만 진행
-            if (visitMaps.Contains(mapName) == false)
+            if (visitMaps.Contains(mapID) == false)
             {
-                visitMaps.Add(mapName);
+                visitMaps.Add(mapID);
 
-                // 현재 맵과 연결된 맵 가져오기
-                HashSet<MapData> connectedMaps = currentMapData.ConnectedMaps;
+                // 탐색 중인 맵과 연결된 맵 가져오기
+                List<string> connectedMaps = MapDatabase.Instance.GetConnectedMap(mapID);
 
-                foreach (MapData nextMapData in connectedMaps)
+                foreach (string nextMapID in connectedMaps)
                 {
-                    string nextMap = nextMapData.Name;
-
-                    if (visitMaps.Contains(nextMap) == false)
+                    if (visitMaps.Contains(nextMapID) == false)
                     {
-                        List<string> newPath = node.Path;
-                        newPath.Add(nextMap);
-
-                        mapQueue.Enqueue(new MapNode(nextMap, newPath));
+                        List<string> newPath = new List<string>(node.Path) { nextMapID };
+                        mapQueue.Enqueue(new MapNode(nextMapID, newPath));
                     }
                 }
             }
@@ -140,26 +177,28 @@ public class QuestNavigator : MonoBehaviour
         return null;
     }
 
-    private GameObject GetTargetObj(Queue<string> path, int npcID)
+    private GameObject GetNextTarget(Queue<string> path, int objID)
     {
         if (path.Count <= 1)
         {
-            // 현재 맵이 목표한 맵일 경우 NPC의 위치 서칭
-            return SearchNPC(npcID);
+            // 현재 맵이 목표한 맵일 경우 오브젝트의 위치 서칭
+            return SearchInteractiveObj(objID);
         }
 
         // 다음 맵 이동을 위한 포탈 위치 리턴
-        return SearchPortal(path.Peek());
+        return SearchPortal(path.Dequeue());
     }
 
-    private GameObject SearchNPC(int id)
+    private GameObject SearchInteractiveObj(int id)
     {
+        // 임시로 NPC 태그 설정
+        // 추후 상호작용이 가능한 오브젝트 태그로 변경할 예정
         return SearchObject<Npc>("NPC", npc => npc.GetID() == id);
     }
 
     private GameObject SearchPortal(string linkedMap)
     {
-        return SearchObject<Portal>("Portal", portal => portal.GetLinkedMap().name == linkedMap);
+        return SearchObject<Portal>("Portal", portal => portal.LinkedScene.name == linkedMap);
     }
 
     private GameObject SearchObject<T>(string tag, Func<T, bool> condition) where T : Component
@@ -180,12 +219,12 @@ public class QuestNavigator : MonoBehaviour
 
     private class MapNode
     {
-        public string MapName { get; }
+        public string MapID { get; }
         public List<string> Path { get; }
 
-        public MapNode(string mapName, List<string> path)
+        public MapNode(string mapID, List<string> path)
         {
-            MapName = mapName;
+            MapID = mapID;
             Path = path;
         }
     }

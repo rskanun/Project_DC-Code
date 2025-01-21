@@ -10,10 +10,10 @@ public class Npc : MonoBehaviour
 
     public int GetID()
     {
-        return npc.Id;
+        return npc.ID;
     }
 
-    public List<Line> GetLines()
+    public virtual List<Line> GetLines()
     {
         return npc.Lines;
     }
