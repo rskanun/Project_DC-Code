@@ -60,7 +60,21 @@ public class TextScriptResource : ScriptableObject
 
     private Stack<Select> selectStack = new Stack<Select>();
 
-    public TextScript CurrentScript { get; private set; }
+    private TextScript currentScript = new TextScript();
+
+    public List<Line> GetNpcLines(int npcID)
+    {
+        int scenarioNum = GetScenarioNumByNpc(npcID);
+
+        return currentScript.GetLines(scenarioNum);
+    }
+
+    public List<Line> GetQuestLines(int questID, QuestState state)
+    {
+        int scenarioNum = GetScenarioNumByQuest(questID, (int)state);
+
+        return currentScript.GetLines(scenarioNum);
+    }
 
     public void LoadScript(int chapter, int root, int subChapter)
     {
@@ -72,7 +86,7 @@ public class TextScriptResource : ScriptableObject
         CsvFile mergeFile = MergeCsvFiles(files);
 
         // CSV 파일의 정보를 토대로 텍스트 스크립트 구현
-        CurrentScript = BuildTextScript(mergeFile);
+        currentScript = BuildTextScript(mergeFile);
     }
 
     private string GetFolderPath(int chapter, int root, int subChapter)
@@ -160,12 +174,42 @@ public class TextScriptResource : ScriptableObject
         return line;
     }
 
-    public bool HasLines(int id)
+    public bool HasNpcLines(int npcID)
+    {
+        int id = GetScenarioNumByNpc(npcID);
+
+        return HasLines(id);
+    }
+
+    public bool HasQuestLines(int questID, QuestState state)
+    {
+        int id = GetScenarioNumByQuest(questID, (int)state);
+
+        return HasLines(id);
+    }
+
+    private bool HasLines(int id)
     {
         if (id > 0)
-            return CurrentScript.ContainsKey(id);
+            return currentScript.ContainsKey(id);
 
         // id값이 0보다 작으면 
         else return false;
+    }
+
+    private int GetScenarioNumByNpc(int npcID)
+    {
+        // NPC의 일반적인 대사의 경우
+        // NPC 판별 번호 1 + NPC 아이디 6자리를 합쳐 시나리오 번호로 지정
+        // ex) NPC 판별 번호 1 + NPC 아이디 001000 => 시나리오 번호 1001000
+        return int.Parse("1" + npcID.ToString("D6"));
+    }
+
+    private int GetScenarioNumByQuest(int questID, int stateNum)
+    {
+        // 퀘스트에 따른 NPC의 대사의 경우
+        // 퀘스트 판별 번호 2 + 퀘스트 아이디 5자리 + 상태 번호 1자리를 합쳐 시나리오 번호로 지정
+        // ex) 퀘스트 판별 번호 2 + 퀘스트 아이디 1 + 상태 번호 1 => 시나리오 번호 2000011
+        return int.Parse("2" + questID.ToString("D5") + stateNum);
     }
 }

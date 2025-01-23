@@ -198,7 +198,7 @@ public class QuestNavigator : MonoBehaviour
 
     private GameObject SearchPortal(string linkedMap)
     {
-        return SearchObject<Portal>("Portal", portal => portal.LinkedScene.name == linkedMap);
+        return SearchObject<Portal>("Portal", portal => portal.LinkedScene == linkedMap);
     }
 
     private GameObject SearchObject<T>(string tag, Func<T, bool> condition) where T : Component

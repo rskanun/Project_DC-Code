@@ -18,7 +18,7 @@ public class NpcData
         get
         {
             // 해당 npc가 대사를 가지고 있지 않은 경우 임시적으로 0번을 리턴
-            if (_id != 0 && !TextScriptResource.Instance.HasLines(_id))
+            if (_id != 0 && !TextScriptResource.Instance.HasNpcLines(_id))
             {
                 return 0;
             }
@@ -35,11 +35,9 @@ public class NpcData
             if (_lines != null) return _lines;
 
             // 해당 npc의 id에 해당하는 대사가 존재할 경우에만 담기
-            if (TextScriptResource.Instance.HasLines(_id))
+            if (TextScriptResource.Instance.HasNpcLines(_id))
             {
-                TextScript script = TextScriptResource.Instance.CurrentScript;
-
-                _lines = script.GetLines(_id);
+                _lines = TextScriptResource.Instance.GetNpcLines(_id);
             }
 
             return _lines;

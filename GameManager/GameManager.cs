@@ -2,18 +2,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private float timer;
-
     [Header("참조 데이터")]
     [SerializeField] private GameData gameData;
 
     private TextScriptResource scriptResource;
-    private ControlContext controller;
 
     private void Awake()
     {
         scriptResource = TextScriptResource.Instance;
-        controller = ControlContext.Instance;
     }
 
     private void Start()

@@ -70,6 +70,7 @@ public class ReadOnlyGameData : ScriptableObject
     {
         get
         {
+#if UNITY_EDITOR
             // 원본이 없는 경우 폴더 내에서 찾기
             if (_origin == null)
                 _origin = AssetDatabase.LoadAssetAtPath<GameData>(FILE_DIRECTORY + "/GameData.asset");
@@ -80,6 +81,7 @@ public class ReadOnlyGameData : ScriptableObject
                 _origin = CreateInstance<GameData>();
                 AssetDatabase.CreateAsset(_origin, FILE_DIRECTORY + "/GameData.asset");
             }
+#endif
 
             return _origin;
         }
@@ -87,11 +89,16 @@ public class ReadOnlyGameData : ScriptableObject
 
     public Chapter Chapter
     {
-        get { return Origin.Chapter; }
+        get => Origin.Chapter;
     }
 
     public MapData CurrentMap
     {
-        get { return Origin.CurrentMap; }
+        get => Origin.CurrentMap;
+    }
+
+    public QuestData CurrentQuest
+    {
+        get => Origin.CurrentQuest;
     }
 }

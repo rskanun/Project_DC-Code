@@ -2,10 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 #endif
 
 public class MapDatabase : ScriptableObject
@@ -114,7 +114,7 @@ public class MapDatabase : ScriptableObject
             foreach (Portal portal in portalList)
             {
                 // 포탈과 연결된 씬의 맵 데이터 가져오기
-                string linkedScenePath = AssetDatabase.GetAssetPath(portal.LinkedScene);
+                string linkedScenePath = AssetDatabase.GetAssetPath(portal.LinkedSceneAsset);
                 MapData linkedMap = FindMapData(linkedScenePath);
 
                 // 해당 포탈이 있는 맵과 포탈이 연결하는 맵의 연결도 만들기

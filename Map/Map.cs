@@ -10,6 +10,12 @@ public class Map : MonoBehaviour
         get => _mapData;
     }
 
+    [ContextMenu("Copy MapID")]
+    public void CopyMapID()
+    {
+        GUIUtility.systemCopyBuffer = MapData.ID;
+    }
+
     private void OnEnable()
     {
         // 게임 플레이 내에서만 동작

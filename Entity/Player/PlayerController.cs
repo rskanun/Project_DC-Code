@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour, IControlState
 
     private void OnInteractKeyPressed(InputAction.CallbackContext context)
     {
-        interactManager.OnTalking();
+        interactManager.OnInteractive();
     }
 
     /************************************************************
