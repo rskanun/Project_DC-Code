@@ -2,9 +2,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("참조 데이터")]
-    [SerializeField] private GameData gameData;
-
     private TextScriptResource scriptResource;
 
     private void Awake()
@@ -25,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        LoadScript(ReadOnlyGameData.Instance.Chapter);
+        LoadScript(GameData.Instance.Chapter);
     }
 
     private void LoadScript(Chapter data)

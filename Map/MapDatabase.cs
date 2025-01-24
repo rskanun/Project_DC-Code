@@ -157,7 +157,7 @@ public class MapDatabase : ScriptableObject
             List<string> list = connection.ConnectedMaps
                 .Select(map => map.Name)
                 .ToList();
-            Debug.Log($"{connection.Map.Name} => {string.Join(",", list)}");
+            //Debug.Log($"{connection.Map.Name} => {string.Join(",", list)}");
         }
     }
 
@@ -187,8 +187,13 @@ public class MapDatabase : ScriptableObject
         List<MapData> connectedMap = mapConnections
             .FirstOrDefault(connection => connection.Map.ID == mapID)?.ConnectedMaps;
 
-        return connectedMap == null ? null
+        return connectedMap == null ? new List<string>()
             : connectedMap.Select(map => map.ID).ToList();
+    }
+
+    public string GetLinkedSceneName(string mapID)
+    {
+        return maps.FirstOrDefault(map => map.ID == mapID).SceneName;
     }
 
     [System.Serializable]

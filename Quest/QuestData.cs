@@ -8,8 +8,8 @@ public class QuestData : ScriptableObject
     public int ID { get => _id; }
 
     [SerializeField] // 퀘스트 내용
-    private string _description;
-    public string Description { get => _description; }
+    private string _content;
+    public string Content { get => _content; }
 
     [SerializeField] // 맵 위치 데이터
     private string _mapID;

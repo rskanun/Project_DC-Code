@@ -1,10 +1,12 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class InteractManager : MonoBehaviour
 {
     [Header("참조 스크립트")]
     [SerializeField] private TalkManager talkManager;
+
+    [Header("플레이어블 캐릭터 오브젝트")]
+    [SerializeField] private GameObject playerObj;
 
     // 현재 상호작용 가능한 NPC
     private Npc npc;
@@ -30,7 +32,7 @@ public class InteractManager : MonoBehaviour
         // 상호작용 할 오브젝트가 없다면 실행 X
         if (npc == null && portal == null) return;
 
-        if (portal != null) SceneManager.LoadScene(portal.LinkedScene);
+        if (portal != null) LoadMap(portal.LinkedScene, portal.TeleportPos);
         else if (npc != null)
         {
             // 대화 시작
@@ -42,9 +44,15 @@ public class InteractManager : MonoBehaviour
         }
     }
 
+    private void LoadMap(string loadScene, Vector2 pos)
+    {
+        MapManager.LoadMap(loadScene);
+        playerObj.transform.localPosition = pos;
+    }
+
     private void CheckToQuest()
     {
-        QuestData curQuest = ReadOnlyGameData.Instance.CurrentQuest;
+        QuestData curQuest = GameData.Instance.CurrentQuest;
 
         if (curQuest != null && curQuest.ObjectID == npc.GetID())
         {
@@ -56,7 +64,7 @@ public class InteractManager : MonoBehaviour
     public void OnEndTalk()
     {
         // 상호작용 NPC가 수행 가능한 퀘스트를 가지고 있는 경우
-        if (npc is QuestNpc questNpc && questNpc.GetAcceptableQuest() is QuestData nextQuest)
+        if (npc.GetAcceptableQuest() is QuestData nextQuest)
         {
             // 해당 퀘스트를 다음 퀘스트로 설정
             QuestManager.Instance.AcceptQuest(nextQuest);

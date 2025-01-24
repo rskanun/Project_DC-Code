@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class NavigatorObject : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject naviArrow;
     private GameObject targetObject;
 
     public void SetTarget(GameObject targetObject)
@@ -12,6 +14,7 @@ public class NavigatorObject : MonoBehaviour
             return;
         }
 
+        naviArrow.SetActive(true);
         this.targetObject = targetObject;
     }
 
@@ -19,7 +22,7 @@ public class NavigatorObject : MonoBehaviour
     {
         // 목표에 도달하게 되면 타겟을 리셋하고서 스스로 꺼짐
         targetObject = null;
-        gameObject.SetActive(false);
+        naviArrow.SetActive(false);
     }
 
     private void Update()
@@ -30,10 +33,10 @@ public class NavigatorObject : MonoBehaviour
             Vector3 direction = (targetObject.transform.position - transform.position).normalized;
 
             // 회전 각도 계산
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90.0f;
 
             // 타겟 방향으로 화살표 돌리기
-            transform.rotation = Quaternion.Euler(0, 0, angle);
+            gameObject.transform.rotation = Quaternion.Euler(0, 0, angle);
         }
     }
 }

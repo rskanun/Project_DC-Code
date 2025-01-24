@@ -13,19 +13,7 @@ public class NpcData
      * 플레이어와의 상호작용에 쓰일 고유 번호
      * 캐릭터 번호 3자리 + 순서번호 3자리로 구성
      ****************************************************************/
-    public int ID
-    {
-        get
-        {
-            // 해당 npc가 대사를 가지고 있지 않은 경우 임시적으로 0번을 리턴
-            if (_id != 0 && !TextScriptResource.Instance.HasNpcLines(_id))
-            {
-                return 0;
-            }
-
-            return _id;
-        }
-    }
+    public int ID { get => _id; }
 
     private List<Line> _lines;
     public List<Line> Lines

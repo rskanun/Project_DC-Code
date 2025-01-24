@@ -52,14 +52,12 @@ public class QuestManager : ScriptableObject
             return _instance;
         }
     }
-    [SerializeField]
-    private GameData gameData;
 
     public void AcceptQuest(QuestData quest)
     {
-        if (quest != null && gameData.CompletedQuests.Contains(quest) == false)
+        if (quest != null && GameData.Instance.CompletedQuests.Contains(quest) == false)
         {
-            gameData.CurrentQuest = quest;
+            GameData.Instance.CurrentQuest = quest;
 
             // 퀘스트 변경 알림
             GameEventManager.Instance.NotifyQuestUpdateEvent();
@@ -68,15 +66,19 @@ public class QuestManager : ScriptableObject
 
     public void CompleteCurrentQuest()
     {
-        gameData.CompletedQuests.Add(gameData.CurrentQuest); // 완료 목록에 추가
-        gameData.CurrentQuest = null; // 이후 현재 퀘스트 초기화
+        QuestData curQuest = GameData.Instance.CurrentQuest;
+        if (curQuest != null)
+        {
+            GameData.Instance.CompletedQuests.Add(curQuest); // 완료 목록에 추가
+            GameData.Instance.CurrentQuest = null; // 이후 현재 퀘스트 초기화
 
-        // 퀘스트 변경 알림
-        GameEventManager.Instance.NotifyQuestUpdateEvent();
+            // 퀘스트 변경 알림
+            GameEventManager.Instance.NotifyQuestUpdateEvent();
+        }
     }
 
     public bool IsCompletedQuest(QuestData quest)
     {
-        return gameData.CompletedQuests.Contains(quest);
+        return GameData.Instance.CompletedQuests.Contains(quest);
     }
 }

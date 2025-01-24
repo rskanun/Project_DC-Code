@@ -2,11 +2,11 @@
 
 public class TextScript
 {
-    private Dictionary<int, List<Line>> _scenarios;
+    private Dictionary<int, List<Line>> scenarios;
 
     public TextScript()
     {
-        _scenarios = new Dictionary<int, List<Line>>();
+        scenarios = new Dictionary<int, List<Line>>();
     }
 
     public List<Line> GetLines(int scenarioNum)
@@ -18,16 +18,16 @@ public class TextScript
             return null;
         }
 
-        return _scenarios[scenarioNum];
+        return scenarios[scenarioNum];
     }
 
     public void SetLines(List<Line> scenario, int scenarioNum)
     {
-        _scenarios[scenarioNum] = scenario;
+        scenarios[scenarioNum] = scenario;
     }
 
     public bool ContainsKey(int id)
     {
-        return _scenarios.ContainsKey(id);
+        return scenarios.ContainsKey(id);
     }
 }
