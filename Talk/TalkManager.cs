@@ -27,11 +27,16 @@ public class TalkManager : MonoBehaviour
         ControlContext.Instance.SetState(controller);
 
         // 대화 처음 시작 시 해당되는 대화목록 가져오기
-        List<Line> lines = npc.GetLines();
+        List<Line> lines = GetLines(npc);
         selectStack = new Stack<Select>();
 
         isTalking = true;
         StartCoroutine(ReadLines(lines));
+    }
+
+    private List<Line> GetLines(Npc npc)
+    {
+        // 
     }
 
     private IEnumerator ReadLines(List<Line> lines)
@@ -50,9 +55,6 @@ public class TalkManager : MonoBehaviour
 
         // 대사를 모두 읽었다면 대화 멈추기
         EndTalk();
-
-        // 상호작용 매니져에 대화가 끝났음을 알림
-        interactManager.OnEndTalk();
     }
 
     public void OnTalkHandler()
@@ -84,6 +86,11 @@ public class TalkManager : MonoBehaviour
     private void NextTalk()
     {
         isPrinting = false;
+    }
+
+    private void EndLines()
+    {
+
     }
 
     private void EndTalk()

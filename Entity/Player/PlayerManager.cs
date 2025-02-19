@@ -63,7 +63,7 @@ public class PlayerManager : MonoBehaviour
             playerAnimator.SetInteger("axisH", h);
 
             // 그래픽이 쳐다보는 방향으로 시야각 돌리기
-            interactManager.RotateEyes(new Vector2(h, 0));
+            RotateEyes(new Vector2(h, 0));
         }
         else if (curH == 0 && curV != v)
         {
@@ -71,12 +71,25 @@ public class PlayerManager : MonoBehaviour
             playerAnimator.SetInteger("axisV", v);
 
             // 그래픽이 쳐다보는 방향으로 시야각 돌리기
-            interactManager.RotateEyes(new Vector2(0, v));
+            RotateEyes(new Vector2(0, v));
         }
         else
         {
             playerAnimator.SetBool("isChanged", false);
         }
+    }
+
+    private void RotateEyes(Vector2 direction)
+    {
+        if (direction == Vector2.zero)
+        {
+            // 멈췄을 때는 반영 안 하기
+            return;
+        }
+
+        // 해당 방향으로 시야각 돌리기
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
     private void FixedUpdate()
