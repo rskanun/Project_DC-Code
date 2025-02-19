@@ -10,6 +10,7 @@ public class TalkManager : MonoBehaviour
     [SerializeField] private SelectManager selectManager;
     [SerializeField] private EventManager eventManager;
     [SerializeField] private PlayerController playerController;
+    [SerializeField] private InteractManager interactManager;
 
     [Space]
     // 현재 라인 진행 상황
@@ -49,6 +50,9 @@ public class TalkManager : MonoBehaviour
 
         // 대사를 모두 읽었다면 대화 멈추기
         EndTalk();
+
+        // 상호작용 매니져에 대화가 끝났음을 알림
+        interactManager.OnEndTalk();
     }
 
     public void OnTalkHandler()
