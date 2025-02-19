@@ -58,7 +58,9 @@ public class MapDatabase : ScriptableObject
     }
 
     // 맵 데이터 정보
+    [ReadOnly, SerializeField]
     private List<MapData> maps = new List<MapData>();
+    [ReadOnly, SerializeField]
     private List<MapConnection> mapConnections = new List<MapConnection>();
 
 #if UNITY_EDITOR
@@ -73,7 +75,11 @@ public class MapDatabase : ScriptableObject
     public void ReloadMaps()
     {
         // 현재 열려있는 씬 경로 저장
-        string originScene = SceneManager.GetActiveScene().path;
+        List<string> openScenes = new List<string>();
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            openScenes.Add(SceneManager.GetSceneAt(i).path);
+        }
 
         // 방문 씬 및 맵 데이터 초기화
         var visitedScenes = new HashSet<string>();
@@ -123,9 +129,13 @@ public class MapDatabase : ScriptableObject
         }
 
         // 본래 열려있던 씬 열기
-        if (!string.IsNullOrEmpty(originScene))
+        if (openScenes.Count > 0)
         {
-            EditorSceneManager.OpenScene(originScene);
+            EditorSceneManager.OpenScene(openScenes[0], OpenSceneMode.Single);
+            for (int i = 1; i < openScenes.Count; i++)
+            {
+                EditorSceneManager.OpenScene(openScenes[i], OpenSceneMode.Additive);
+            }
         }
 
         Debug.Log("맵 리로드 완료!");
@@ -149,31 +159,6 @@ public class MapDatabase : ScriptableObject
         return findMap;
     }
 #endif
-
-    private void OnValidate()
-    {
-        foreach (MapConnection connection in mapConnections)
-        {
-            List<string> list = connection.ConnectedMaps
-                .Select(map => map.Name)
-                .ToList();
-            //Debug.Log($"{connection.Map.Name} => {string.Join(",", list)}");
-        }
-    }
-
-    [ContextMenu("Print Connection")]
-    public void PrintConnection()
-    {
-        foreach (MapConnection connection in mapConnections)
-        {
-            List<MapData> connectedMaps = connection.ConnectedMaps;
-            List<string> strList = connectedMaps.Select(map => map.Name).ToList();
-
-            Debug.Log($"{connection.Map.Name} Connection : {string.Join(",", strList)}");
-        }
-
-        if (mapConnections.Count <= 0) Debug.Log("No Connection");
-    }
 
     public string FindMapNameByID(string id)
     {
@@ -199,8 +184,21 @@ public class MapDatabase : ScriptableObject
     [System.Serializable]
     private class MapConnection
     {
-        public MapData Map { private set; get; }
-        public List<MapData> ConnectedMaps { private set; get; }
+        [ReadOnly, SerializeField]
+        private MapData _map;
+        public MapData Map
+        {
+            private set => _map = value;
+            get => _map;
+        }
+
+        [ReadOnly, SerializeField]
+        private List<MapData> _connectedMaps;
+        public List<MapData> ConnectedMaps
+        {
+            private set => _connectedMaps = value;
+            get => _connectedMaps;
+        }
 
         public MapConnection(MapData map)
         {
