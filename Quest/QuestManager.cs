@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -55,7 +53,7 @@ public class QuestManager : ScriptableObject
 
     public void AcceptQuest(QuestData quest)
     {
-        if (quest != null && GameData.Instance.CompletedQuests.Contains(quest) == false)
+        if (quest != null && IsCompletedQuest(quest) == false)
         {
             GameData.Instance.CurrentQuest = quest;
 
@@ -69,7 +67,7 @@ public class QuestManager : ScriptableObject
         QuestData curQuest = GameData.Instance.CurrentQuest;
         if (curQuest != null)
         {
-            GameData.Instance.CompletedQuests.Add(curQuest); // 완료 목록에 추가
+            GameData.Instance.CompletedQuests.Add(curQuest.ID); // 완료 목록에 추가
             GameData.Instance.CurrentQuest = null; // 이후 현재 퀘스트 초기화
 
             // 퀘스트 변경 알림
@@ -79,6 +77,6 @@ public class QuestManager : ScriptableObject
 
     public bool IsCompletedQuest(QuestData quest)
     {
-        return GameData.Instance.CompletedQuests.Contains(quest);
+        return GameData.Instance.CompletedQuests.Contains(quest.ID);
     }
 }

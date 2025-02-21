@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class Portal : MonoBehaviour
+public class Portal : InteractableObject
 {
 #if UNITY_EDITOR
     [SerializeField]
@@ -27,4 +27,10 @@ public class Portal : MonoBehaviour
             _linkedScene = _linkedSceneAsset.name;
     }
 #endif
+
+    public override void OnInteractive(PlayerManager player)
+    {
+        // 포탈의 상호작용은 맵 이동
+        player.OnMoveMap(this);
+    }
 }

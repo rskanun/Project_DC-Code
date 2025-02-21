@@ -1,15 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InteractManager : MonoBehaviour
 {
     // 상호작용이 가능한 오브젝트 목록
-    private List<InteractableObject> interactObjs = new List<InteractableObject>();
+    private HashSet<InteractableObject> interactObjs = new HashSet<InteractableObject>();
 
     // 상호작용 액션 코루틴
     private Coroutine curInteractAction;
     private InteractableObject curInteractObj;
+
+    public void ClearInteractObjs()
+    {
+        interactObjs.Clear();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -62,7 +68,7 @@ public class InteractManager : MonoBehaviour
         }
 
         // 가장 처음 접근한 오브젝트와 상호작용
-        curInteractObj = interactObjs[0];
+        curInteractObj = interactObjs.First();
         curInteractAction = StartCoroutine(InteractAction(player));
     }
 

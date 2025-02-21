@@ -115,9 +115,8 @@ public class GameData : ScriptableObject
         get => _currentQuest;
         set => _currentQuest = value;
     }
-    [SerializeField]
-    private List<QuestData> _completedQuests = new List<QuestData>();
-    public List<QuestData> CompletedQuests
+    private HashSet<int> _completedQuests = new HashSet<int>();
+    public HashSet<int> CompletedQuests
     {
         get => _completedQuests;
     }

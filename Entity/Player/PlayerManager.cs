@@ -132,4 +132,14 @@ public class PlayerManager : MonoBehaviour
     {
         talkManager.StartTalk(npc);
     }
+
+    public void OnMoveMap(Portal portal)
+    {
+        // 플레이어가 현재 있는 씬과 좌표 이동
+        MapManager.LoadMap(portal.LinkedScene);
+        rigid.transform.localPosition = portal.TeleportPos;
+
+        // 그에 따라 맞닿은 오브젝트 목록 초기화
+        interactManager.ClearInteractObjs();
+    }
 }

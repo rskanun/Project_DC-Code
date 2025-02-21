@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TalkManager : MonoBehaviour
@@ -20,42 +21,6 @@ public class TalkManager : MonoBehaviour
 
     // Select 관련 변수
     private Stack<Select> selectStack;
-
-    public void StartTalk(Npc npc)
-    {
-        // 대화 전용 컨트롤러로 변경
-        ControlContext.Instance.SetState(controller);
-
-        // 대화 처음 시작 시 해당되는 대화목록 가져오기
-        List<Line> lines = GetLines(npc);
-        selectStack = new Stack<Select>();
-
-        isTalking = true;
-        StartCoroutine(ReadLines(lines));
-    }
-
-    private List<Line> GetLines(Npc npc)
-    {
-        // 
-    }
-
-    private IEnumerator ReadLines(List<Line> lines)
-    {
-        while (lineNum < lines.Count)
-        {
-            // 대사 출력
-            PrintLine(lines[lineNum]);
-
-            // 대사를 출력하는 동안 대기
-            yield return new WaitUntil(() => !isPrinting);
-
-            // 다음 대사 출력
-            lineNum++;
-        }
-
-        // 대사를 모두 읽었다면 대화 멈추기
-        EndTalk();
-    }
 
     public void OnTalkHandler()
     {
@@ -83,27 +48,147 @@ public class TalkManager : MonoBehaviour
         }
     }
 
+    public void StartTalk(Npc npc)
+    {
+        // 대화 전용 컨트롤러로 변경
+        ControlContext.Instance.SetState(controller);
+
+        // 대화 처음 시작 시 해당되는 대화목록 가져오기
+        List<Line> lines = GetLines(npc);
+        selectStack = new Stack<Select>();
+
+        // 현재 완료 및 수주가 가능한 퀘스트 처리
+        CheckToQuest(npc);
+
+        // 대사 읽기 시작
+        StartCoroutine(ReadLines(npc, lines));
+    }
+
+    private void CheckToQuest(Npc npc)
+    {
+        // 완료할 퀘스트가 있는 경우 완료
+        if (!TryCompleteQuest(npc, out QuestData completeQuest))
+        {
+            // 수주할 퀘스트가 있는 경우 수주
+            TryAcceptQuest(npc, out QuestData acceptQuest);
+        }
+    }
+
+    private bool TryCompleteQuest(Npc npc, out QuestData completeQuest)
+    {
+        completeQuest = npc.GetCompletableQuest();
+        if (completeQuest != null)
+        {
+            // 퀘스트 완료
+            QuestManager.Instance.CompleteCurrentQuest();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryAcceptQuest(Npc npc, out QuestData acceptQuest)
+    {
+        acceptQuest = npc.GetAcceptableQuest();
+        if (acceptQuest != null)
+        {
+            // 퀘스트 수주
+            QuestManager.Instance.AcceptQuest(acceptQuest);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerator ReadLines(Npc npc, List<Line> lines)
+    {
+        isTalking = true;
+
+        while (lineNum < lines.Count)
+        {
+            // 대사 출력
+            PrintLine(lines[lineNum]);
+
+            // 대사를 출력하는 동안 대기
+            yield return new WaitUntil(() => !isPrinting);
+
+            // 다음 대사 출력
+            lineNum++;
+        }
+
+        // 대사를 모두 읽었다면 대사 출력 멈추기
+        EndLines(npc);
+    }
+
     private void NextTalk()
     {
         isPrinting = false;
     }
 
-    private void EndLines()
-    {
-
-    }
-
-    private void EndTalk()
+    private void EndLines(Npc npc)
     {
         // 대사 읽기에 쓰이는 변수 초기화
         isPrinting = false;
         isTalking = false;
         lineNum = 0;
 
+        // 수주 가능한 퀘스트 확인
+        if (TryAcceptQuest(npc, out QuestData acceptQuest))
+        {
+            // 해당 퀘스트 수락 대화 시작
+            List<Line> lines = GetQuestLines(acceptQuest, QuestState.ACCEPTABLE);
+            StartCoroutine(ReadLines(npc, lines));
+        }
+
+        // 완료 가능한 퀘스트 확인
+        else if (TryCompleteQuest(npc, out QuestData completeQuest))
+        {
+            // 해당 퀘스트 완료 대화 시작
+            List<Line> lines = GetQuestLines(completeQuest, QuestState.COMPLETABLE);
+            StartCoroutine(ReadLines(npc, lines));
+        }
+
+        // 완료 및 수주 가능한 퀘스트가 없는 경우
+        else
+        {
+            // 더 진행할 대화가 없어 끝내기
+            EndTalk();
+        }
+    }
+
+    private void EndTalk()
+    {
         // 대화창 UI 끄기
         textManager.CloseDialogue();
 
         ControlContext.Instance.SetState(playerController);
+    }
+
+    private List<Line> GetLines(Npc npc)
+    {
+        // 진행 가능한 퀘스트가 있는 경우
+        QuestData quest = npc.GetAcceptableQuest();
+        if (quest != null) return GetQuestLines(quest, QuestState.ACCEPTABLE);
+
+        // 완료 가능한 퀘스트가 있는 경우
+        quest = npc.GetCompletableQuest();
+        if (quest != null) return GetQuestLines(quest, QuestState.COMPLETABLE);
+
+        // 진행 중인 퀘스트가 있는 경우
+        quest = npc.GetAcceptedQuest();
+        if (quest != null) return GetQuestLines(quest, QuestState.ONGOING);
+
+        return npc.GetLines();
+    }
+
+    private List<Line> GetQuestLines(QuestData quest, QuestState state)
+    {
+        if (quest == null)
+            return null;
+
+        return TextScriptResource.Instance.GetQuestLines(quest.ID, state);
     }
 
     /************************************************************
