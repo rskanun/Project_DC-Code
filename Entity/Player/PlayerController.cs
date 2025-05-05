@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour, IControlState
+public class PlayerController : MonoBehaviour, IController
 {
 
     [Header("참조 스크립트")]

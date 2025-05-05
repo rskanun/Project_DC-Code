@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TalkController : MonoBehaviour, IControlState
+public class TalkController : MonoBehaviour, IController
 {
     [Header("참조 스크립트")]
     [SerializeField] private TalkManager talkManager;
