@@ -7,13 +7,12 @@ public abstract class OrdealTitle : MonoBehaviour
 {
     public SceneAsset titleScene;
     public SceneAsset gameScene;
-    public IController controller;
     public GameObject tutorialPopup;
 
-    public void OnEnable()
+    private void OnEnable()
     {
-        // 시련 컨트롤러 활성화
-        ControlContext.Instance.SetState(controller);
+        // 타이틀이 활성화 되어있는 동안엔 키 입력 막기
+        ControlContext.Instance.KeyLock();
     }
 
     public void OnStart()
@@ -56,8 +55,8 @@ public abstract class OrdealTitle : MonoBehaviour
         // 애니메이션이 끝나면 씬 언로드
         SceneManager.UnloadSceneAsync(titleScene.name);
 
-        // 캐릭터 컨트롤러 재활성화
-        ControlContext.Instance.SetState(typeof(PlayerController));
+        // 키 입력 재활성화
+        ControlContext.Instance.KeyUnlock();
     }
 
     protected abstract IEnumerator OnReturnAnimation();
