@@ -48,6 +48,9 @@ public class AgitationPlayer : AgitationEntity
         int amount = GetAgitationAmount(pips);
         AgitationNPC.SelectedNPC.OnAgitatedBy(this, amount);
 
+        // 플레이어 또한 게이지 상승
+        stat.AgitationLevel += 25;
+
         // 행동 종료
         TurnEnd();
     }
@@ -75,8 +78,8 @@ public class AgitationPlayer : AgitationEntity
         Debug.Log($"협상에 따른 주사위 결과: {pips}");
 
         // 성공 및 실패 판정
-        // 확실한 값 아님!!!!!
-        AgitationNPC.SelectedNPC.OnNegotiatedBy(this, pips >= 5);
+        int failThreshold = AgitationGameOption.Instance.NegotiationThreshold;
+        AgitationNPC.SelectedNPC.OnNegotiatedBy(this, pips >= failThreshold);
 
         // 행동 종료
         TurnEnd();

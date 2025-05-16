@@ -41,6 +41,14 @@ public class AgitationEntityStat : IReadOnlyAgitationEntityStat
         }
     }
 
+    [SerializeField]
+    private int _roundDamage;
+    public int RoundDamage
+    {
+        get => _roundDamage;
+        set => _roundDamage = (value >= 0) ? value : 0;
+    }
+
     public void InitStat()
     {
         // 게임 설정값에 따른 최대치 설정

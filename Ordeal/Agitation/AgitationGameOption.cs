@@ -1,4 +1,8 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -59,4 +63,34 @@ public class AgitationGameOption : ScriptableObject
     private int _maxAgitationLevel;
     public int MaxAgitationLevel => _maxAgitationLevel;
 
+    [Header("게임 내 확률")]
+    [SerializeField, Range(1, 20)]
+    private int _negotiationThreshold = 5;
+    public int NegotiationThreshold => _negotiationThreshold;
+
+    [Header("라운드 별 데미지")]
+    [SerializeField]
+    private List<RoundDamage> _roundDamages;
+
+    public int GetDamage(int rank, int round)
+    {
+        RoundDamage damages = (round < _roundDamages.Count)
+            ? _roundDamages[round] : _roundDamages.LastOrDefault();
+
+        return rank switch
+        {
+            1 => damages.first,
+            2 => damages.second,
+            3 => damages.third,
+            _ => 0
+        };
+    }
+
+    [System.Serializable]
+    private class RoundDamage
+    {
+        public int first;
+        public int second;
+        public int third;
+    }
 }

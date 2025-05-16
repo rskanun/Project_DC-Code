@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(AgitationPlayer))]
@@ -26,6 +27,15 @@ public class AgitationGameManager : MonoBehaviour
         // 플레이어 정보 컴포넌트 가져오기
         player = GetComponent<AgitationPlayer>();
 
+        // 게임 초기 설정
+        InitGame();
+
+        // 게임 시작
+        StartCoroutine(RunningGame());
+    }
+
+    private void InitGame()
+    {
         // 참여자 정보를 게임 데이터에 갱신
         foreach (AgitationNPC npc in npcs)
         {
@@ -35,9 +45,6 @@ public class AgitationGameManager : MonoBehaviour
 
         // 플레이어 데이터 등록
         AgitationGameData.Instance.RegisterEntity(player);
-
-        // 게임 시작
-        StartCoroutine(RunningGame());
     }
 
     private IEnumerator RunningGame()
@@ -48,8 +55,58 @@ public class AgitationGameManager : MonoBehaviour
         // 행동 종료까지 대기
         yield return new WaitUntil(() => player.IsActionComplete());
 
-        // NPC들의 투표 받기
+        // 플레이어 투표 받기
 
+        // 투표 전까지 대기
+
+        // 나머지 NPC 투표 진행
+        GatherVotes();
+
+        // 투표 집계 및 결과에 따른 데미지 계산
+        TallyVotes();
+
+        // 데미지 계산
     }
 
+    private void GatherVotes()
+    {
+        foreach (AgitationNPC npc in npcs)
+        {
+            // npc마다 돌아가며 각자의 성격(AI)대로 투표 진행
+            VoteEntity(npc.GetVotedTarget());
+        }
+    }
+
+    private void VoteEntity(AgitationEntity target)
+    {
+        Dictionary<AgitationEntity, int> voteCount = AgitationGameData.Instance.VoteCount;
+
+        if (voteCount.TryGetValue(target, out int count))
+            voteCount[target] = count + 1;
+        else
+            voteCount[target] = 1;
+    }
+
+    private void TallyVotes()
+    {
+        // 투표를 집계하여 투표수가 많은 순서대로 정렬
+        List<(AgitationEntity entity, int count)> voteCount = AgitationGameData.Instance.VoteCount
+            .OrderByDescending(pair => pair.Value)
+            .Select(pair => (pair.Key, pair.Value))
+            .ToList();
+
+        // 상위부터 순위를 매기며 데미지 가산
+        int rank = 1;
+        for (int i = 0; i < 3; i++)
+        {
+            // 동일한 투표수는 같은 등수로 취급
+            if (i > 0 && voteCount[i].count < voteCount[i - 1].count) rank = i + 1;
+
+            int round = AgitationGameData.Instance.Days;
+            int damage = AgitationGameOption.Instance.GetDamage(rank, round);
+
+            voteCount[i].entity.CumulativeRoundDamage(damage);
+            Debug.Log($"{voteCount[i].entity.name} => +{damage}");
+        }
+    }
 }

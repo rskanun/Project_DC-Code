@@ -3,8 +3,8 @@ using UnityEngine;
 public abstract class AgitationEntity : MonoBehaviour
 {
     [Header("캐릭터 정보")]
-    [SerializeField] private string entityName;
-    [SerializeField] private AgitationEntityStat stat;
+    [SerializeField]
+    protected AgitationEntityStat stat;
     public IReadOnlyAgitationEntityStat Stat; // 외부 읽기용 스텟
 
     // 캐릭터의 현재 상태
@@ -34,6 +34,11 @@ public abstract class AgitationEntity : MonoBehaviour
         // 협상에 성공한 경우에만 선동 게이지 줄이기
         // 자세한 수치는 후에 수정 => 현재 수치 완전하지 않음!!!!
         if (isSuccess) stat.AgitationLevel -= stat.AgitationLevel / 2;
+    }
+
+    public void CumulativeRoundDamage(int cumulativeDamage)
+    {
+        stat.RoundDamage += cumulativeDamage;
     }
 
     private void OnDead()

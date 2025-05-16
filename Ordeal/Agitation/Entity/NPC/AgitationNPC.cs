@@ -78,6 +78,6 @@ public class AgitationNPC : AgitationEntity, ISelectHandler, IDeselectHandler
                 return entity;
         }
 
-        return null;
+        return entities.LastOrDefault();
     }
 }
