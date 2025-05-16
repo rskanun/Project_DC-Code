@@ -5,6 +5,7 @@ public abstract class AgitationEntity : MonoBehaviour
     [Header("캐릭터 정보")]
     [SerializeField] private string entityName;
     [SerializeField] private AgitationEntityStat stat;
+    public IReadOnlyAgitationEntityStat Stat; // 외부 읽기용 스텟
 
     // 캐릭터의 현재 상태
     private bool _isDead;
@@ -13,6 +14,7 @@ public abstract class AgitationEntity : MonoBehaviour
     private void OnEnable()
     {
         stat.InitStat();
+        Stat = stat;
     }
 
     public virtual void OnAgitatedBy(AgitationEntity agitator, int amount)

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class AgitationEntityStat
+public class AgitationEntityStat : IReadOnlyAgitationEntityStat
 {
     private int _maxHealthPoint;
     public int MaxHP => _maxHealthPoint;

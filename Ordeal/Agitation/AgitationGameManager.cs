@@ -27,11 +27,14 @@ public class AgitationGameManager : MonoBehaviour
         player = GetComponent<AgitationPlayer>();
 
         // 참여자 정보를 게임 데이터에 갱신
-        AgitationGameData.Instance.RegisterEntity(player);
         foreach (AgitationNPC npc in npcs)
         {
+            // A~E NPC 데이터 등록
             AgitationGameData.Instance.RegisterEntity(npc);
         }
+
+        // 플레이어 데이터 등록
+        AgitationGameData.Instance.RegisterEntity(player);
 
         // 게임 시작
         StartCoroutine(RunningGame());
