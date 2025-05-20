@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
+
 
 
 
@@ -54,6 +56,12 @@ public class AgitationGameOption : ScriptableObject
         }
     }
 
+    [Space]
+    [Header("종료 일")]
+    [SerializeField]
+    private int _dDay;
+    public int DDay => _dDay;
+
     [Header("공통 스탯")]
     [SerializeField]
     private int _maxHP;
@@ -68,8 +76,8 @@ public class AgitationGameOption : ScriptableObject
     private int _negotiationThreshold = 5;
     public int NegotiationThreshold => _negotiationThreshold;
 
-    [Header("라운드 별 데미지")]
-    [SerializeField]
+    [Title("라운드 별 데미지")]
+    [SerializeField, TableList]
     private List<RoundDamage> _roundDamages;
 
     public int GetDamage(int rank, int round)

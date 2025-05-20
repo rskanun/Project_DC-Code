@@ -57,5 +57,6 @@ public class AgitationEntityStat : IReadOnlyAgitationEntityStat
 
         // 최대치에 따른 HP 값 조정
         HP = MaxHP;
+        Debug.Log($"{MaxHP}/{HP}");
     }
 }

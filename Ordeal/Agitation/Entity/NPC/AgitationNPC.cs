@@ -75,7 +75,9 @@ public class AgitationNPC : AgitationEntity, ISelectHandler, IDeselectHandler
         {
             cumulative += entity.Stat.AgitationLevel;
             if (random < cumulative)
+            {
                 return entity;
+            }
         }
 
         return entities.LastOrDefault();

@@ -15,7 +15,9 @@ public class AgitationGameManager : MonoBehaviour
     // 6. 아무도 사망하지 않았다면, 모든 캐릭터들은 공통 데미지를 받는다
     // 7. 1번으로 돌아간다
 
-    [SerializeField] private GameObject selection;
+    // 스크립트
+    [SerializeField]
+    private VoteSelection voteSelection;
 
     // 참여자 정보
     [SerializeField]
@@ -45,27 +47,93 @@ public class AgitationGameManager : MonoBehaviour
 
         // 플레이어 데이터 등록
         AgitationGameData.Instance.RegisterEntity(player);
+
+        // 날짜 초기화
+        AgitationGameData.Instance.Days = 1;
     }
 
     private IEnumerator RunningGame()
     {
-        // 플레이어 행동 진행
-        player.TakeTurn();
+        // 사망한 엔티티가 있는 지 여부
+        bool isDeadAnyone = false;
 
-        // 행동 종료까지 대기
-        yield return new WaitUntil(() => player.IsActionComplete());
+        // 사망자가 나오거나 D-Day가 될 때까지 게임 진행
+        while (!isDeadAnyone && !AgitationGameData.Instance.IsDDay)
+        {
+            // 플레이어 행동 진행
+            player.TakeTurn();
 
-        // 플레이어 투표 받기
+            // 행동 종료까지 대기
+            yield return new WaitUntil(() => player.IsActionComplete());
 
-        // 투표 전까지 대기
+            // 플레이어 투표 받기
+            voteSelection.ActiveVotePanel();
 
-        // 나머지 NPC 투표 진행
-        GatherVotes();
+            // 투표 전까지 대기
+            yield return new WaitUntil(() => voteSelection.HasVoted);
 
-        // 투표 집계 및 결과에 따른 데미지 계산
-        TallyVotes();
+            // 나머지 NPC 투표 진행
+            GatherVotes();
 
-        // 데미지 계산
+            // 투표 집계 및 결과에 따른 데미지 계산
+            TallyVotes();
+
+            // 데미지 처리
+            foreach (AgitationEntity entity in AgitationGameData.Instance.Entities)
+            {
+                // 모든 엔티티가 돌아가며 자신의 누적 데미지(=라운드 데미지)만큼 체력 소모
+                entity.TakeDamage();
+
+                // 한 명이라도 사망했다면, 게임 종료
+                if (entity.IsDead) isDeadAnyone = true;
+            }
+
+            // 날짜 변경
+            NextDay();
+        }
+
+        // 게임 종료 시, 상황에 따른 이벤트 진행
+        OnGameEnd();
+    }
+
+    private void NextDay()
+    {
+        AgitationGameData.Instance.Days += 1;
+    }
+
+    private void OnGameEnd()
+    {
+        // 플레이어 또는 E(피해자)가 사망한 경우 패배
+        if (player.IsDead || player.IsDead)
+        {
+            // 패배 처리
+            GameOver();
+            return;
+        }
+
+        // 그 외엔 승리 처리
+        GameClear();
+    }
+
+    private void GameClear()
+    {
+        Debug.Log("승리!");
+    }
+
+    private void GameOver()
+    {
+        Debug.Log("패배...");
+    }
+
+    /************************************************************
+    * [투표]
+    * 
+    * 투표 진행 및 집계와 그에 따른 누적 데미지 처리
+    ************************************************************/
+
+    public void VoteEntity(AgitationEntity target)
+    {
+        AgitationGameData.Instance.VoteCount[target]++;
     }
 
     private void GatherVotes()
@@ -75,16 +143,6 @@ public class AgitationGameManager : MonoBehaviour
             // npc마다 돌아가며 각자의 성격(AI)대로 투표 진행
             VoteEntity(npc.GetVotedTarget());
         }
-    }
-
-    private void VoteEntity(AgitationEntity target)
-    {
-        Dictionary<AgitationEntity, int> voteCount = AgitationGameData.Instance.VoteCount;
-
-        if (voteCount.TryGetValue(target, out int count))
-            voteCount[target] = count + 1;
-        else
-            voteCount[target] = 1;
     }
 
     private void TallyVotes()
@@ -106,7 +164,7 @@ public class AgitationGameManager : MonoBehaviour
             int damage = AgitationGameOption.Instance.GetDamage(rank, round);
 
             voteCount[i].entity.CumulativeRoundDamage(damage);
-            Debug.Log($"{voteCount[i].entity.name} => +{damage}");
+            Debug.Log($"{voteCount[i].entity.name} => {voteCount[i].entity.Stat.RoundDamage}(+{damage})");
         }
     }
 }
