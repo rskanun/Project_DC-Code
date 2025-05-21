@@ -1,5 +1,12 @@
 using UnityEngine;
 
+public enum AgitationSelectType
+{
+    Agitation, // 선동
+    Negotiation, // 협상
+    Looking // 방관
+}
+
 public class AgitationPlayer : AgitationEntity
 {
     [SerializeField] private GameObject selection;
@@ -33,6 +40,8 @@ public class AgitationPlayer : AgitationEntity
 
     public void OnSelectAgitation()
     {
+        RecordSelection(AgitationSelectType.Agitation, AgitationNPC.SelectedNPC);
+
         // 행동 선택 후, 선택지 비활성화
         selection.SetActive(false);
 
@@ -49,7 +58,7 @@ public class AgitationPlayer : AgitationEntity
         AgitationNPC.SelectedNPC.OnAgitatedBy(this, amount);
 
         // 플레이어 또한 게이지 상승
-        stat.AgitationLevel += 25;
+        Stat.AgitationLevel += 25;
 
         // 행동 종료
         TurnEnd();
@@ -66,6 +75,8 @@ public class AgitationPlayer : AgitationEntity
 
     public void OnSelectNegotiation()
     {
+        RecordSelection(AgitationSelectType.Negotiation, AgitationNPC.SelectedNPC);
+
         // 행동 선택 후, 선택지 비활성화
         selection.SetActive(false);
 
@@ -87,10 +98,21 @@ public class AgitationPlayer : AgitationEntity
 
     public void OnSelectLooking()
     {
+        RecordSelection(AgitationSelectType.Looking, this);
+
         // 아무것도 하지 않고 바로 선택지 비활성화
         selection.SetActive(false);
 
         // 행동 종료
         TurnEnd();
+    }
+
+    private void RecordSelection(AgitationSelectType type, AgitationEntity target)
+    {
+        // 플레이어가 이번 턴에 어떤 행동을 했는 지 게임 데이터에 기록
+        AgitationGameData gameData = AgitationGameData.Instance;
+
+        gameData.PlayerSelect = type;
+        gameData.SelectedEntity = target;
     }
 }

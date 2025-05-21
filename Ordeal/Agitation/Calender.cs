@@ -5,12 +5,24 @@ public class Calender : MonoBehaviour
 {
     public TextMeshProUGUI calenderText;
 
-    public void UpdateDate()
+    public void InitDate()
     {
-        int curDay = AgitationGameData.Instance.Days;
-        int DDay = AgitationGameOption.Instance.DDay;
+        // 1일부터 시작
+        SetDate(1);
+    }
 
-        calenderText.text = $"{curDay} Days";
-        calenderText.color = (curDay == DDay - 1) ? Color.red : Color.black;
+    public void NextDay()
+    {
+        SetDate(AgitationGameData.Instance.Days + 1);
+    }
+
+    private void SetDate(int day)
+    {
+        AgitationGameData.Instance.Days = day;
+
+        bool isLastDay = day == AgitationGameOption.Instance.DDay - 1;
+
+        calenderText.text = isLastDay ? "Last Day" : $"{day} Days";
+        calenderText.color = isLastDay ? Color.red : Color.black;
     }
 }

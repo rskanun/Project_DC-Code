@@ -62,6 +62,11 @@ public class AgitationGameOption : ScriptableObject
     private int _dDay;
     public int DDay => _dDay;
 
+    [Header("E 초기 선동 게이지")]
+    [SerializeField]
+    private int _initAgitationLevel;
+    public int InitAgitationLevel => _initAgitationLevel;
+
     [Header("공통 스탯")]
     [SerializeField]
     private int _maxHP;

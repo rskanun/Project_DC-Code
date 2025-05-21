@@ -7,11 +7,11 @@ public abstract class AgitationEntity : MonoBehaviour
 
     [Header("캐릭터 정보")]
     [SerializeField]
-    protected string entityName;
-    public string EntityName => entityName;
+    private string _entityName;
+    public string EntityName => _entityName;
     [SerializeField]
-    protected AgitationEntityStat stat;
-    public IReadOnlyAgitationEntityStat Stat; // 외부 읽기용 스텟
+    private AgitationEntityStat _stat;
+    public AgitationEntityStat Stat => _stat;
 
     // 캐릭터의 현재 상태
     private bool _isDead;
@@ -19,37 +19,35 @@ public abstract class AgitationEntity : MonoBehaviour
 
     private void OnEnable()
     {
-        stat.InitStat();
-        hpBar.SetAmount(stat.MaxHP, stat.HP);
-
-        Stat = stat;
+        Stat.InitStat();
+        hpBar.SetAmount(Stat.MaxHP, Stat.HP);
     }
 
-    public virtual void OnAgitatedBy(AgitationEntity agitator, int amount)
+    public void OnAgitatedBy(AgitationEntity agitator, int amount)
     {
-        stat.AgitationLevel += amount;
+        Stat.AgitationLevel += amount;
     }
 
-    public virtual void OnNegotiatedBy(AgitationEntity negotiator, bool isSuccess)
+    public void OnNegotiatedBy(AgitationEntity negotiator, bool isSuccess)
     {
         // 협상에 성공한 경우에만 선동 게이지 줄이기
-        // 자세한 수치는 후에 수정 => 현재 수치 완전하지 않음!!!!
-        if (isSuccess) stat.AgitationLevel -= stat.AgitationLevel / 2;
+        if (isSuccess)
+            Stat.AgitationLevel = Stat.AgitationLevel / 2;
     }
 
     public void CumulativeRoundDamage(int cumulativeDamage)
     {
-        stat.RoundDamage += cumulativeDamage;
+        Stat.RoundDamage += cumulativeDamage;
     }
 
     public void TakeDamage()
     {
         // 이 엔티티의 누적 데미지(라운드 데미지)만큼 데미지 입기
-        stat.HP -= stat.RoundDamage;
-        hpBar.SetAmount(stat.MaxHP, stat.HP);
+        Stat.HP -= Stat.RoundDamage;
+        hpBar.SetAmount(Stat.MaxHP, Stat.HP);
 
         // 사망 확인
-        if (stat.HP <= 0) OnDead();
+        if (Stat.HP <= 0) OnDead();
     }
 
     private void OnDead()

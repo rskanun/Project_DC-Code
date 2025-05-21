@@ -18,6 +18,8 @@ public class AgitationGameManager : MonoBehaviour
     // 스크립트
     [SerializeField]
     private VoteSelection voteSelection;
+    [SerializeField]
+    private Calender calender;
 
     // 참여자 정보
     [SerializeField]
@@ -27,7 +29,7 @@ public class AgitationGameManager : MonoBehaviour
     private void Start()
     {
         // 플레이어 정보 컴포넌트 가져오기
-        player = GetComponent<AgitationPlayer>();
+        player = AgitationGameData.Instance.Player = GetComponent<AgitationPlayer>();
 
         // 게임 초기 설정
         InitGame();
@@ -89,16 +91,11 @@ public class AgitationGameManager : MonoBehaviour
             }
 
             // 날짜 변경
-            NextDay();
+            calender.NextDay();
         }
 
         // 게임 종료 시, 상황에 따른 이벤트 진행
         OnGameEnd();
-    }
-
-    private void NextDay()
-    {
-        AgitationGameData.Instance.Days += 1;
     }
 
     private void OnGameEnd()

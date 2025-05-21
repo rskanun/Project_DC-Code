@@ -53,15 +53,9 @@ public class GameEventManager : ScriptableObject
 
     // 게임 이벤트 종류
     [SerializeField] private GameEvent questEvent;
-    [SerializeField] private GameEvent dayUpdateEvent;
 
     public void NotifyQuestUpdateEvent()
     {
         questEvent.NotifyUpdate();
-    }
-
-    public void NotifyDayUpdateEvent()
-    {
-        dayUpdateEvent.NotifyUpdate();
     }
 }

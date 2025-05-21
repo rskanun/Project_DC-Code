@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class AgitationEntityStat : IReadOnlyAgitationEntityStat
+public class AgitationEntityStat
 {
     private int _maxHealthPoint;
     public int MaxHP => _maxHealthPoint;
@@ -45,8 +45,16 @@ public class AgitationEntityStat : IReadOnlyAgitationEntityStat
     private int _roundDamage;
     public int RoundDamage
     {
-        get => _roundDamage;
+        get => _roundDamage + (IsDamageCritical ? _roundDamage : 0);
         set => _roundDamage = (value >= 0) ? value : 0;
+    }
+
+    [SerializeField]
+    private bool _isDamageCritical;
+    public bool IsDamageCritical
+    {
+        get => _isDamageCritical;
+        set => _isDamageCritical = value;
     }
 
     public void InitStat()
@@ -57,6 +65,5 @@ public class AgitationEntityStat : IReadOnlyAgitationEntityStat
 
         // 최대치에 따른 HP 값 조정
         HP = MaxHP;
-        Debug.Log($"{MaxHP}/{HP}");
     }
 }

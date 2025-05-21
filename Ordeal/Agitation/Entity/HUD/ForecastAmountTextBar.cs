@@ -3,6 +3,11 @@ using UnityEngine.UI;
 public class ForecastAmountTextBar : AmountTextBar
 {
     public Image forecastBar;
+    public override void SetAmount(int max, int amount)
+    {
+        base.SetAmount(max, amount);
+        forecastBar.fillAmount = 0;
+    }
     public void SetAmount(int max, int amount, int decreaseAmount)
     {
         // 현재 양과 동시에 감소될 양도 함께 보여주기

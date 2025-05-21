@@ -9,6 +9,9 @@ public class AgitationNPC : AgitationEntity, ISelectHandler, IDeselectHandler
     static private AgitationNPC firstSelect;
     public bool isFirstSelect;
 
+    [SerializeField]
+    private AgitationTrait trait;
+
     [SerializeField] private GameObject selectMark;
 
 #if UNITY_EDITOR
@@ -62,24 +65,8 @@ public class AgitationNPC : AgitationEntity, ISelectHandler, IDeselectHandler
     * NPC들은 현재 상황과 자신의 성격(AI)에 따라 투표 진행
     ************************************************************/
 
-    public virtual AgitationEntity GetVotedTarget()
+    public AgitationEntity GetVotedTarget()
     {
-        List<AgitationEntity> entities = AgitationGameData.Instance.Entities;
-
-        // 각 엔티티들의 선동 게이지 비율을 토대로 랜덤 뽑기
-        int sum = entities.Sum(e => e.Stat.AgitationLevel);
-        int random = Random.Range(0, sum);
-
-        int cumulative = 0;
-        foreach (AgitationEntity entity in entities)
-        {
-            cumulative += entity.Stat.AgitationLevel;
-            if (random < cumulative)
-            {
-                return entity;
-            }
-        }
-
-        return entities.LastOrDefault();
+        return trait.GetVotedTarget(this, AgitationGameData.Instance.Entities);
     }
 }
