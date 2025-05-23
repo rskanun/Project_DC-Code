@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using MyDC.Agitation.Entity;
+using Unity.VisualScripting.Dependencies.Sqlite;
+
 
 
 #if UNITY_EDITOR
@@ -70,9 +72,8 @@ namespace MyDC.Agitation.GameSystem
         [SerializeField]
         private OutcastAction _outcastVoteAlgorithm;
         public OutcastAction OutcastVoteAlgorithm => _outcastVoteAlgorithm;
-        [TableList]
+        [SerializeField, TableList]
         private List<int> _increaseLevelByVoted;
-        public List<int> IncreaseLevelByVoted => _increaseLevelByVoted;
 
         [Header("°øÅë ½ºÅÈ")]
         [SerializeField]
@@ -104,6 +105,12 @@ namespace MyDC.Agitation.GameSystem
                 3 => damages.third,
                 _ => 0
             };
+        }
+
+        public int GetIncreaseLevel(int round)
+        {
+            if (_increaseLevelByVoted.Count <= round) return 0;
+            return _increaseLevelByVoted[round];
         }
 
         [System.Serializable]

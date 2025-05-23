@@ -32,7 +32,7 @@ namespace MyDC.Agitation.Entity
         {
             // 투표마다 선동 게이지 증가
             int round = GameSystem.GameData.Instance.Days;
-            voter.Stat.AgitationLevel += GameOption.Instance.IncreaseLevelByVoted[round];
+            voter.Stat.AgitationLevel += GameOption.Instance.GetIncreaseLevel(round);
 
             OutcastAction selectType = GameOption.Instance.OutcastVoteAlgorithm;
             return voteAlgorithm[selectType]?.Invoke(voter, targets);
