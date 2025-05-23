@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AmountBar : MonoBehaviour
+namespace MyDC.Agitation.HUD
 {
-    public Image bar;
-    public virtual void SetAmount(int max, int amount)
+    public class AmountBar : MonoBehaviour
     {
-        bar.fillAmount = (float)amount / max;
+        public Image bar;
+        public virtual void SetAmount(int max, int amount)
+        {
+            bar.fillAmount = (float)amount / max;
+        }
     }
 }

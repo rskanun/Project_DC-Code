@@ -1,27 +1,32 @@
 using System.Collections.Generic;
+using UnityEngine;
 
-public class Madman : AgitationTrait
+namespace MyDC.Agitation.Entity
 {
-    private bool isActivePassive;
-    public override AgitationEntity GetVotedTarget(AgitationNPC voter, List<AgitationEntity> targets)
+    [CreateAssetMenu(fileName = "Madman", menuName = "Agitation Trait/Madman")]
+    public class Madman : Trait
     {
-        // 해당 캐릭터가 선동 게이지를 가지고 있는 경우 광인 패시브 발동
-        // 광인 패시브 = 모든 엔티티 데미지 두 배
-        SetActivePassive(targets, voter.Stat.AgitationLevel > 0);
-
-        // 투표는 기본 베이스대로
-        return base.GetVotedTarget(voter, targets);
-    }
-
-    private void SetActivePassive(List<AgitationEntity> targets, bool isActive)
-    {
-        // 현재 상태와 동일하면 패스
-        if (isActive == isActivePassive) return;
-
-        isActivePassive = isActive;
-        foreach (AgitationEntity target in targets)
+        private bool isActivePassive;
+        public override Entity GetVotedTarget(NPC voter, List<Entity> targets)
         {
-            target.Stat.IsDamageCritical = isActive;
+            // 해당 캐릭터가 선동 게이지를 가지고 있는 경우 광인 패시브 발동
+            // 광인 패시브 = 모든 엔티티 데미지 두 배
+            SetActivePassive(targets, voter.Stat.AgitationLevel > 0);
+
+            // 투표는 기본 베이스대로
+            return base.GetVotedTarget(voter, targets);
+        }
+
+        private void SetActivePassive(List<Entity> targets, bool isActive)
+        {
+            // 현재 상태와 동일하면 패스
+            if (isActive == isActivePassive) return;
+
+            isActivePassive = isActive;
+            foreach (Entity target in targets)
+            {
+                target.Stat.IsDamageCritical = isActive;
+            }
         }
     }
 }

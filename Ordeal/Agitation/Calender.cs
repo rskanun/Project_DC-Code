@@ -1,28 +1,31 @@
 using TMPro;
 using UnityEngine;
 
-public class Calender : MonoBehaviour
+namespace MyDC.Agitation.GameSystem
 {
-    public TextMeshProUGUI calenderText;
-
-    public void InitDate()
+    public class Calender : MonoBehaviour
     {
-        // 1일부터 시작
-        SetDate(1);
-    }
+        public TextMeshProUGUI calenderText;
 
-    public void NextDay()
-    {
-        SetDate(AgitationGameData.Instance.Days + 1);
-    }
+        public void InitDate()
+        {
+            // 1일부터 시작
+            SetDate(1);
+        }
 
-    private void SetDate(int day)
-    {
-        AgitationGameData.Instance.Days = day;
+        public void NextDay()
+        {
+            SetDate(GameData.Instance.Days + 1);
+        }
 
-        bool isLastDay = day == AgitationGameOption.Instance.DDay - 1;
+        private void SetDate(int day)
+        {
+            GameData.Instance.Days = day;
 
-        calenderText.text = isLastDay ? "Last Day" : $"{day} Days";
-        calenderText.color = isLastDay ? Color.red : Color.black;
+            bool isLastDay = day == GameOption.Instance.DDay - 1;
+
+            calenderText.text = isLastDay ? "Last Day" : $"{day} Days";
+            calenderText.color = isLastDay ? Color.red : Color.black;
+        }
     }
 }
