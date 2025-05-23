@@ -7,15 +7,21 @@ public class Avenger : AgitationTrait
     public override AgitationEntity GetVotedTarget(AgitationNPC voter, List<AgitationEntity> targets)
     {
         // 전 턴에 선동을 당하지 않았다면, 기본 룰 베이스로 투표
-        if (!isAgitated) return base.GetVotedTarget(voter, targets);
+        if (!IsAgitated(voter)) return base.GetVotedTarget(voter, targets);
 
         // 자신의 선동 게이지를 10% 감소(소수점 반올림)
         int newLevel = Mathf.RoundToInt(voter.Stat.AgitationLevel * 0.9f);
         voter.Stat.AgitationLevel = newLevel;
 
-        isAgitated = false;
+        // 플레이어 투표
+        return AgitationGameData.Instance.Player;
+    }
 
-        // 자신을 선동한 대상 투표
-        return agitator;
+    private bool IsAgitated(AgitationNPC voter)
+    {
+        AgitationSelectType action = AgitationGameData.Instance.PlayerSelect;
+        AgitationEntity target = AgitationGameData.Instance.SelectedEntity;
+
+        return action == AgitationSelectType.Agitation && target == voter;
     }
 }
