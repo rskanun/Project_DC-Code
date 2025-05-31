@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MyDC.Agitation.Entity;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace MyDC.Agitation.GameSystem
@@ -29,6 +30,31 @@ namespace MyDC.Agitation.GameSystem
         private List<NPC> npcs;
         private Player player;
         private NPC protectNPC;
+
+        [Title("참여자 선동 게이지 정보")]
+        public int p;
+        public int a;
+        public int b;
+        public int c;
+        public int d;
+        public int e;
+
+        public void UpdateAgitationLevel()
+        {
+            p = player.Stat.AgitationLevel;
+
+            foreach (NPC npc in npcs)
+            {
+                switch (npc.EntityName)
+                {
+                    case "A": a = npc.Stat.AgitationLevel; break;
+                    case "B": b = npc.Stat.AgitationLevel; break;
+                    case "C": c = npc.Stat.AgitationLevel; break;
+                    case "D": d = npc.Stat.AgitationLevel; break;
+                    case "E": e = npc.Stat.AgitationLevel; break;
+                }
+            }
+        }
 
         private void Start()
         {
@@ -67,6 +93,8 @@ namespace MyDC.Agitation.GameSystem
             // 사망자가 나오거나 D-Day가 될 때까지 게임 진행
             while (!isDeadAnyone && !GameData.Instance.IsDDay)
             {
+                UpdateAgitationLevel(); // 임시 선동 게이지 UI 업데이트
+
                 // 플레이어 행동 진행
                 player.TakeTurn();
 

@@ -62,8 +62,8 @@ namespace MyDC.Agitation.GameSystem
         [Space]
         [Header("종료 일")]
         [SerializeField]
-        private int _dDay;
-        public int DDay => _dDay;
+        private int _lastDays;
+        public int LastDays => _lastDays;
 
         [Header("E 관련 옵션")]
         [SerializeField]
@@ -85,13 +85,20 @@ namespace MyDC.Agitation.GameSystem
         public int MaxAgitationLevel => _maxAgitationLevel;
 
         [Header("게임 내 확률")]
-        [SerializeField, Range(1, 20)]
-        private int _negotiationThreshold = 5;
-        public int NegotiationThreshold => _negotiationThreshold;
+        [SerializeField, Range(5, 100)]
+        private int _negotiationThreshold = 25;
+        public int NegotiationThreshold => _negotiationThreshold / 5;
 
         [Title("라운드 별 데미지")]
         [SerializeField, TableList]
         private List<RoundDamage> _roundDamages;
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            _negotiationThreshold = Mathf.RoundToInt(_negotiationThreshold / 5.0f) * 5;
+        }
+#endif
 
         public int GetDamage(int rank, int round)
         {

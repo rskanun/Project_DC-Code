@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 
@@ -6,7 +7,6 @@ namespace MyDC.Agitation.GameSystem
     public class Calender : MonoBehaviour
     {
         public TextMeshProUGUI calenderText;
-
         public void InitDate()
         {
             // 1일부터 시작
@@ -22,9 +22,9 @@ namespace MyDC.Agitation.GameSystem
         {
             GameData.Instance.Days = day;
 
-            bool isLastDay = day == GameOption.Instance.DDay - 1;
+            bool isLastDay = day >= GameOption.Instance.LastDays;
 
-            calenderText.text = isLastDay ? "Last Day" : $"{day} Days";
+            calenderText.text = isLastDay ? "Last Days" : $"{day} Days";
             calenderText.color = isLastDay ? Color.red : Color.black;
         }
     }

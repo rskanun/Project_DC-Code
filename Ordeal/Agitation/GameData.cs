@@ -20,7 +20,7 @@ namespace MyDC.Agitation.GameSystem
         public int Days { get; set; }
 
         public bool IsDDay
-            => Days >= GameOption.Instance.DDay;
+            => Days > GameOption.Instance.LastDays;
 
         // 참여자 정보
         public List<Entity.Entity> Entities { get; private set; }
