@@ -3,100 +3,38 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-public enum OptionType
-{
-    Graphic,
-    Sound,
-    Control,
-    GamePlay,
-    Others
-}
-
 public class OptionSelection : MonoBehaviour
 {
     [SerializeField] private GameObject optionPivot;
     [SerializeField] private GameObject firstSelect;
-    [SerializeField] private List<GameObject> options;
-    private GameObject prevItem;
-    private GameObject nextItem;
+    [SerializeField] private List<TextMeshProUGUI> options;
 
     [Header("애니메이션 설정")]
     [SerializeField] private float angle = 17.5f;
-    [SerializeField] private float moveX = 180.0f;
-    [SerializeField] private float fontUpSize = 12.13f;
+    [SerializeField] private float selectX = 805.0f;
+    [SerializeField] private float selectSize = 83.38f;
+    [SerializeField] private float deselectX = 625.0f;
+    [SerializeField] private float deselectSize = 71.25f;
     [SerializeField] private float normalFontAlpha = 0.77f;
     [SerializeField] private float duration = 0.3f;
     [SerializeField] private Ease ease;
 
-    // 옵션들의 텍스트 필드
-    private List<TextMeshProUGUI> textFields = new();
-    private int index;
-    private int prevIndex;
+    private int optionCount = 5;
+    private int curIdx = 6;
+    private int minIdx = 4;
+    private int maxIdx = 8;
 
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        UpdateTextFields();
-        UpdateCurrentOption();
-        CachePreviewItems();
-    }
-
-    private void UpdateTextFields()
-    {
-        textFields.Clear();
-
-        foreach (GameObject option in options)
-        {
-            // 텍스트 필드 찾아서 넣기
-            textFields.Add(option.GetComponentInChildren<TextMeshProUGUI>());
-        }
-    }
-
-    private void UpdateCurrentOption()
-    {
-        if (firstSelect == null) return;
-
-        for (int i = 0; i < options.Count; i++)
-        {
-            if (firstSelect == options[i])
-            {
-                index = i;
-                return;
-            }
-        }
-    }
-#endif
-
-    private void CachePreviewItems()
-    {
-        int prevIndex = (index + options.Count - 3) % options.Count;
-        int nextIndex = (index + 3) % options.Count;
-
-        // 다음 대체 항목 지정
-        prevItem = options[prevIndex];
-        nextItem = options[nextIndex];
-
-        // 해당 항목의 정보 업데이트
-        textFields[prevIndex].text = textFields[(index + 2) % options.Count].text;
-        textFields[nextIndex].text = textFields[(index + options.Count - 2) % options.Count].text;
-    }
+    private bool _isRolled;
+    public bool IsRolled => _isRolled;
+    private OptionType _state = OptionType.Graphic;
+    public OptionType State => _state;
 
     /// <summary>
     /// 다음 항목으로 넘어가기
     /// </summary>
     public void Next()
     {
-        prevIndex = index;
-        index = (index + 1) % options.Count;
-
-        // 아래의 항목이 위로 올라오도록 반시계 방향으로 돌림
-        RotateAnimation(angle);
-
-        // 대체 항목 업데이트
-        CachePreviewItems();
-
-        // 위치 업데이트
-        nextItem.transform.localEulerAngles -= new Vector3(0, 0, angle * options.Count);
+        JumpTo(curIdx + 1);
     }
 
     /// <summary>
@@ -104,50 +42,95 @@ public class OptionSelection : MonoBehaviour
     /// </summary>
     public void Prev()
     {
-        prevIndex = index;
-        index = (index + options.Count - 1) % options.Count;
-
-        // 위의 항목이 아래로 내려가도록 시계 방향으로 돌림
-        RotateAnimation(-angle);
-
-        // 대체 항목 업데이트
-        CachePreviewItems();
-
-        // 위치 업데이트
-        prevItem.transform.localEulerAngles += new Vector3(0, 0, angle * options.Count);
+        JumpTo(curIdx - 1);
     }
 
-    private void RotateAnimation(float angle)
+    /// <summary>
+    /// 특정 index로 바로 이동
+    /// </summary>
+    public void JumpTo(int index)
     {
+        // 현재 선택된 옵션이거나, 옵션 선택 애니메이션이 실행되고 있는 경우 무시
+        if (index == curIdx || _isRolled) return;
+
+        _isRolled = true;
+
         // 회전 애니메이션
-        Vector3 endAngle = optionPivot.transform.localEulerAngles + new Vector3(0, 0, angle);
-        optionPivot.transform
+        Vector3 endAngle = optionPivot.transform.localEulerAngles + new Vector3(0, 0, angle * (index - curIdx));
+        Tween rotateAnimation = optionPivot.transform
             .DORotate(endAngle, duration, RotateMode.FastBeyond360)
             .SetEase(ease);
 
         // 이전 옵션을 원래 크기와 위치로 되돌리기
-        // 텍스트를 움직여야 함!!!
-        float endPosX = textFields[prevIndex].transform.localPosition.x - moveX;
-        float endSize = textFields[prevIndex].fontSize - fontUpSize;
-
-        DOTween.Sequence()
-            .Join(textFields[prevIndex].transform.DOLocalMoveX(endPosX, duration))
-            .Join(DOTween.To(() => textFields[prevIndex].fontSize,
-            x => textFields[prevIndex].fontSize = x,
-            endSize, duration))
-            .Join(textFields[prevIndex].DOFade(normalFontAlpha, duration))
+        Sequence deselectAnimation = DOTween.Sequence()
+            .Join(options[curIdx].transform.DOLocalMoveX(deselectX, duration))
+            .Join(DOTween.To(() => options[curIdx].fontSize,
+            x => options[curIdx].fontSize = x,
+            deselectSize, duration))
+            .Join(options[curIdx].DOFade(normalFontAlpha, duration))
             .SetEase(ease);
 
         // 가운데 위치할 새로운 옵션의 크기와 위치 변경
-        // 텍스트를 움직여야 함!!!
-        endPosX = textFields[index].transform.localPosition.x + moveX;
-        endSize = textFields[index].fontSize + fontUpSize;
-        DOTween.Sequence()
-            .Join(textFields[index].transform.DOLocalMoveX(endPosX, duration))
-            .Join(DOTween.To(() => textFields[index].fontSize,
-            x => textFields[index].fontSize = x,
-            endSize, duration))
-            .Join(textFields[index].DOFade(1.0f, duration))
+        Sequence selectAnimation = DOTween.Sequence()
+            .Join(options[index].transform.DOLocalMoveX(selectX, duration))
+            .Join(DOTween.To(() => options[index].fontSize,
+            x => options[index].fontSize = x,
+            selectSize, duration))
+            .Join(options[index].DOFade(1.0f, duration))
             .SetEase(ease);
+
+        // 애니메이션 합쳐서 재생
+        DOTween.Sequence()
+            .Join(rotateAnimation)
+            .Join(deselectAnimation)
+            .Join(selectAnimation)
+            .OnComplete(() =>
+            {
+                // 모든 애니메이션이 끝난 경우 현재 위치 업데이트
+                UpdateIndex(index);
+
+                // 업데이트 된 위치 기반으로 무슨 옵션인지 설정
+                _state = (OptionType)((curIdx - optionCount + 1) % optionCount);
+
+                // 다음 이동 위치 받을 준비
+                _isRolled = false;
+            });
+    }
+
+    private void UpdateIndex(int index)
+    {
+        curIdx = index;
+
+        // 특정 구간을 넘었다면 부드럽게 이어지기 위해 칸 당기기
+        if (curIdx < minIdx)
+        {
+            curIdx += optionCount;
+
+            optionPivot.transform.localEulerAngles += new Vector3(0, 0, angle * optionCount);
+            SelectOption(curIdx);
+            DeselectOption(curIdx - optionCount);
+        }
+        else if (curIdx > maxIdx)
+        {
+            curIdx -= optionCount;
+
+            optionPivot.transform.localEulerAngles -= new Vector3(0, 0, angle * optionCount);
+            SelectOption(curIdx);
+            DeselectOption(curIdx + optionCount);
+        }
+    }
+
+    private void SelectOption(int index)
+    {
+        options[index].transform.localPosition = new Vector2(selectX, options[index].transform.localPosition.y);
+        options[index].fontSize = selectSize;
+        options[index].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    private void DeselectOption(int index)
+    {
+        options[index].transform.localPosition = new Vector2(deselectX, options[index].transform.localPosition.y);
+        options[index].fontSize = deselectSize;
+        options[index].color = new Color(1.0f, 1.0f, 1.0f, normalFontAlpha);
     }
 }
