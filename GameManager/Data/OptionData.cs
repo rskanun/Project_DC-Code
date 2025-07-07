@@ -63,4 +63,43 @@ public class OptionData : ScriptableObject
         get { return _typingSpeed; }
     }
 
+    /************************************************************
+    * [그래픽 데이터]
+    * 
+    * 게임 그래픽과 관련된 데이터
+    ************************************************************/
+
+    [SerializeField]
+    private Vector2 _resolution;
+    public Vector2 Resolution => _resolution;
+
+
+    /************************************************************
+    * [키 배치 데이터]
+    * 
+    * 게임 내 키 배치와 관련된 데이터
+    ************************************************************/
+
+    /************************************************************
+    * [게임 플레이 데이터]
+    * 
+    * 게임 플레이와 연관된 옵션 데이터
+    ************************************************************/
+
+    [SerializeField]
+    private string _hudType;
+    public string HudType => _hudType;
+
+    [SerializeField]
+    private string _hudSize;
+    public string HudSize => _hudSize;
+
+    [SerializeField]
+    private float _fontSize = 52.5f;
+    public float FontSize
+    {
+        get => _fontSize;
+        set => _fontSize = value;
+    }
+
 }

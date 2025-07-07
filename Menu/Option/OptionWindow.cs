@@ -8,6 +8,9 @@ public class OptionWindow : MonoBehaviour
     [Header("옵션창 목록")]
     [SerializeField] private GameObject graphicWindow;
     [SerializeField] private GameObject soundWindow;
+    [SerializeField] private GameObject controlWindow;
+    [SerializeField] private GameObject gameplayWindow;
+    [SerializeField] private GameObject othersWindow;
 
     private Dictionary<OptionType, GameObject> optionWindows;
     private OptionType state = OptionType.Graphic;
@@ -19,9 +22,9 @@ public class OptionWindow : MonoBehaviour
         {
             { OptionType.Graphic, graphicWindow },
             { OptionType.Sound, soundWindow },
-            { OptionType.Control, soundWindow },
-            { OptionType.GamePlay, soundWindow },
-            { OptionType.Others, soundWindow },
+            { OptionType.Control, controlWindow },
+            { OptionType.GamePlay, gameplayWindow },
+            { OptionType.Others, othersWindow },
         };
     }
 #endif
