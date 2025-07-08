@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour, IController
     [Header("참조 스크립트")]
     [SerializeField] private PlayerManager player;
     [SerializeField] private InteractManager interactManager;
+    [SerializeField] private MenuManager menu;
 
     private MainInput.PlayerActions input;
 
@@ -77,16 +78,11 @@ public class PlayerController : MonoBehaviour, IController
     /************************************************************
     * [메뉴키]
     * 
-    * 메뉴창을 열음
+    * 현재 상황을 일시정지 하고서 메뉴창을 열음
     ************************************************************/
 
     private void OnMenuKeyPressed(InputAction.CallbackContext context)
     {
-        /*
-            arrowKeyVec = Vector2.zero;
-
-            ControlContext.Instance.SetState(menuController);
-            menuController.OpenMenu();
-        */
+        menu.OpenMenu();
     }
 }

@@ -84,6 +84,7 @@ public class OptionSelection : MonoBehaviour
             .Join(rotateAnimation)
             .Join(deselectAnimation)
             .Join(selectAnimation)
+            .SetUpdate(true)
             .OnComplete(() =>
             {
                 // 모든 애니메이션이 끝난 경우 현재 위치 업데이트
