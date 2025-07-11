@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PauseMenuManager : MonoBehaviour, IMenu
+public class PauseMenu : MonoBehaviour, IMenu
 {
+    [SerializeField] private MenuManager manager;
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject firstSelectButton;
 
@@ -29,7 +30,7 @@ public class PauseMenuManager : MonoBehaviour, IMenu
 
     public void OnClickSave()
     {
-
+        manager.OpenSaveMenu();
     }
 
     public void OnClickLoad()
@@ -40,7 +41,7 @@ public class PauseMenuManager : MonoBehaviour, IMenu
 
     public void OnClickOption()
     {
-
+        manager.OpenOption();
     }
 
     public void OnClickQuit()

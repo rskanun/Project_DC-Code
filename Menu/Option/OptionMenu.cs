@@ -11,10 +11,20 @@ public enum OptionType
     Others = 1
 }
 
-public class OptionManager : MonoBehaviour
+public class OptionMenu : MonoBehaviour, IMenu
 {
     [SerializeField] private OptionSelection selection;
     [SerializeField] private OptionWindow window;
+
+    public void OpenMenu()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void CloseMenu()
+    {
+        gameObject.SetActive(false);
+    }
 
     /// <summary>
     /// 다음 항목으로 넘어가기

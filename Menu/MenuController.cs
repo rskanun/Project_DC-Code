@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class MenuController : MonoBehaviour, IController
+public class MenuController : Controller
 {
     [Header("참조 스크립트")]
     [SerializeField] private MenuManager menu;
@@ -15,21 +15,15 @@ public class MenuController : MonoBehaviour, IController
         playerInput = ControlContext.Instance.KeyInput.Player;
     }
 
-    public void OnConnected()
+    public override void OnConnected()
     {
-        uiInput.Enable();
         uiInput.Cancel.performed += OnCancelKeyPressed;
-
-        playerInput.Enable();
         playerInput.Menu.performed += OnMenuKeyPressed;
     }
 
-    public void OnDisconnected()
+    public override void OnDisconnected()
     {
-        uiInput.Disable();
         uiInput.Cancel.performed -= OnCancelKeyPressed;
-
-        playerInput.Disable();
         playerInput.Menu.performed -= OnMenuKeyPressed;
     }
 

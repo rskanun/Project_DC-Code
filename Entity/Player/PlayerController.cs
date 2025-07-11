@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour, IController
+public class PlayerController : Controller
 {
 
     [Header("참조 스크립트")]
@@ -15,10 +15,8 @@ public class PlayerController : MonoBehaviour, IController
         input = ControlContext.Instance.KeyInput.Player;
     }
 
-    public void OnConnected()
+    public override void OnConnected()
     {
-        input.Enable();
-
         input.Movement.performed += OnMoveKeyPressed;
         input.Movement.canceled += OnMoveKeyPressed;
         input.Running.performed += OnRunKeyPressed;
@@ -26,14 +24,15 @@ public class PlayerController : MonoBehaviour, IController
         input.Interact.performed += OnInteractKeyPressed;
     }
 
-    public void OnDisconnected()
+    public override void OnDisconnected()
     {
-        input.Disable();
-
         input.Movement.performed -= OnMoveKeyPressed;
         input.Movement.canceled -= OnMoveKeyPressed;
         input.Running.performed -= OnRunKeyPressed;
         input.Interact.performed -= OnInteractKeyPressed;
+
+        // 플레이어의 움직임 멈추기
+        player.MovingPlayer(Vector2.zero);
     }
 
     /************************************************************

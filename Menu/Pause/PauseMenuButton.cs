@@ -16,13 +16,31 @@ public class PauseMenuButton : MonoBehaviour, ISelectHandler, IDeselectHandler
     [SerializeField] private Sprite deselectSprite;
     [SerializeField] private Color deselectColor;
 
+    private void OnEnable()
+    {
+        GameObject selectObj = EventSystem.current.currentSelectedGameObject;
+
+        if (selectObj == gameObject) SetSelectOption();
+        else SetDeselectOption();
+    }
+
     public void OnSelect(BaseEventData eventData)
+    {
+        SetSelectOption();
+    }
+
+    private void SetSelectOption()
     {
         image.sprite = selectSprite;
         textField.color = selectColor;
     }
 
     public void OnDeselect(BaseEventData eventData)
+    {
+        SetDeselectOption();
+    }
+
+    public void SetDeselectOption()
     {
         image.sprite = deselectSprite;
         textField.color = deselectColor;

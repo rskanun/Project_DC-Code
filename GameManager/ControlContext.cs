@@ -2,12 +2,6 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 public class ControlContext
 {
     private static ControlContext _instance;
@@ -22,8 +16,8 @@ public class ControlContext
         }
     }
 
-    private IController _currentState;
-    public IController CurrentState
+    private Controller _currentState;
+    public Controller CurrentState
     {
         private set { _currentState = value; }
         get { return _currentState; }
@@ -49,7 +43,8 @@ public class ControlContext
     }
 
     // 현재 등록된 컨트롤러 목록
-    private HashSet<IController> connectControllers = new HashSet<IController>();
+    private Dictionary<Type, Controller> controllers = new();
+    private HashSet<Controller> connectControllers = new HashSet<Controller>();
 
     public ControlContext()
     {
@@ -57,19 +52,44 @@ public class ControlContext
         KeyInput.UI.Enable();
     }
 
-    public void ConnectController(IController controller)
+    public void RegisterController(Controller controller)
     {
-        controller.OnConnected();
-        connectControllers.Add(controller);
+        controllers.Add(controller.GetType(), controller);
     }
 
-    public void DisconnectController(IController controller)
+    public void RemoveController(Controller controller)
     {
-        // 현재 연결되어 있지 않은 컨트롤러인 경우 무시
-        if (!connectControllers.Contains(controller)) return;
+        if (controller == null) return;
 
-        controller.OnDisconnected();
-        connectControllers.Remove(controller);
+        controllers.Remove(controller.GetType());
+    }
+
+    public void ConnectController(Type type)
+    {
+        if (!controllers.ContainsKey(type))
+        {
+            Debug.LogWarning($"{type} is not a registered controller!");
+            return;
+        }
+
+        Controller connectController = controllers[type];
+
+        connectController.OnConnected();
+        connectControllers.Add(connectController);
+    }
+
+    public void DisconnectController(Type type)
+    {
+        if (!controllers.ContainsKey(type))
+        {
+            Debug.LogWarning($"{type} is not a registered controller!");
+            return;
+        }
+
+        Controller disconnectController = controllers[type];
+
+        disconnectController.OnDisconnected();
+        connectControllers.Remove(disconnectController);
     }
 
     public void KeyLock()

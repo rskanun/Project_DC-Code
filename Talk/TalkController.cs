@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TalkController : MonoBehaviour, IController
+public class TalkController : Controller
 {
     [Header("참조 스크립트")]
     [SerializeField] private TalkManager talkManager;
@@ -13,17 +13,13 @@ public class TalkController : MonoBehaviour, IController
         input = ControlContext.Instance.KeyInput.UI;
     }
 
-    public void OnConnected()
+    public override void OnConnected()
     {
-        input.Enable();
-
         input.Submit.performed += OnSubmitKeyPressed;
     }
 
-    public void OnDisconnected()
+    public override void OnDisconnected()
     {
-        input.Disable();
-
         input.Submit.performed -= OnSubmitKeyPressed;
     }
 

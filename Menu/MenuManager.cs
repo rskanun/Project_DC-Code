@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
-    [SerializeField] private MenuController controller;
-    [SerializeField] private PlayerController playerController;
-    [SerializeField] private PauseMenuManager pauseMenu;
-    [SerializeField] private OptionManager optionMenu;
+    [SerializeField] private PauseMenu pauseMenu;
+    [SerializeField] private OptionMenu optionMenu;
+    [SerializeField] private SaveMenu saveMenu;
 
     // 현재 상태
     private IMenu current;
@@ -21,7 +20,7 @@ public class MenuManager : MonoBehaviour
         _isOpened = true;
 
         // 플레이어 컨트롤러 비활성화
-        ControlContext.Instance.DisconnectController(playerController);
+        ControlContext.Instance.DisconnectController(typeof(PlayerController));
 
         // 메뉴가 열려있는 동안엔 시간이 흐르지 않도록 조정
         timeScale = Time.timeScale;
@@ -32,11 +31,6 @@ public class MenuManager : MonoBehaviour
 
         // 현재 메뉴 업데이트
         current = pauseMenu;
-    }
-
-    public void OpenOption()
-    {
-        // 일시정지 메뉴 비활성화
     }
 
     /// <summary>
@@ -53,6 +47,30 @@ public class MenuManager : MonoBehaviour
         Time.timeScale = timeScale;
 
         // 플레이어 컨트롤러 재활성화
-        ControlContext.Instance.ConnectController(playerController);
+        ControlContext.Instance.ConnectController(typeof(PlayerController));
+    }
+
+    /// <summary>
+    /// 현재 메뉴창을 닫고 다른 메뉴창을 열기
+    /// </summary>
+    /// <param name="menu">현재 메뉴창을 닫고서 열 메뉴</param>
+    public void SwapMenu(IMenu menu)
+    {
+        if (menu == null) return;
+
+        current?.CloseMenu();
+        menu.OpenMenu();
+
+        current = menu;
+    }
+
+    public void OpenOption()
+    {
+        SwapMenu(optionMenu);
+    }
+
+    public void OpenSaveMenu()
+    {
+        SwapMenu(saveMenu);
     }
 }
