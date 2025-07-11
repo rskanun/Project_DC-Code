@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class MenuController : MonoBehaviour, IController
 {
     [Header("참조 스크립트")]
-    [SerializeField] private PlayerController playerController;
+    [SerializeField] private MenuManager menu;
 
     private MainInput.UIActions uiInput;
     private MainInput.PlayerActions playerInput;
@@ -41,7 +41,10 @@ public class MenuController : MonoBehaviour, IController
 
     private void OnMenuKeyPressed(InputAction.CallbackContext context)
     {
-
+        if (menu.IsOpened) // 메뉴가 열린 상태에선 닫기
+            menu.CloseMenu();
+        else // 닫힌 상태에선 열기
+            menu.OpenMenu();
     }
 
     private void OnCancelKeyPressed(InputAction.CallbackContext context)

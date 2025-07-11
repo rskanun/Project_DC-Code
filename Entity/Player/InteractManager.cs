@@ -26,7 +26,7 @@ public class InteractManager : MonoBehaviour
             InteractableObject interactObj = collision.gameObject.GetComponent<InteractableObject>();
             interactObjs.Add(interactObj);
 
-            Debug.Log($"keydown {KeyResource.Instance.Interact}");
+            //Debug.Log($"keydown {KeyResource.Instance.Interact}");
         }
     }
 

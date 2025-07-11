@@ -50,8 +50,11 @@ public class TalkManager : MonoBehaviour
 
     public void StartTalk(Npc npc)
     {
-        // 대화 전용 컨트롤러로 변경
-        ControlContext.Instance.SetState(controller);
+        // 플레이어 조작 컨트롤러 비활성화
+        ControlContext.Instance.DisconnectController(playerController);
+
+        // 대화 조작 컨트롤러 활성화
+        ControlContext.Instance.ConnectController(controller);
 
         // 대화 처음 시작 시 해당되는 대화목록 가져오기
         List<Line> lines = GetLines(npc);
@@ -163,7 +166,11 @@ public class TalkManager : MonoBehaviour
         // 대화창 UI 끄기
         textManager.CloseDialogue();
 
-        ControlContext.Instance.SetState(playerController);
+        // 플레이어 조작 컨트롤러 활성화
+        ControlContext.Instance.ConnectController(playerController);
+
+        // 대화 조작 컨트롤러 비활성화
+        ControlContext.Instance.DisconnectController(controller);
     }
 
     private List<Line> GetLines(Npc npc)

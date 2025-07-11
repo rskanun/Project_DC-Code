@@ -7,18 +7,12 @@ public class PlayerController : MonoBehaviour, IController
     [Header("참조 스크립트")]
     [SerializeField] private PlayerManager player;
     [SerializeField] private InteractManager interactManager;
-    [SerializeField] private MenuManager menu;
 
     private MainInput.PlayerActions input;
 
     private void Awake()
     {
         input = ControlContext.Instance.KeyInput.Player;
-    }
-
-    private void Start()
-    {
-        ControlContext.Instance.SetState(this);
     }
 
     public void OnConnected()
@@ -30,7 +24,6 @@ public class PlayerController : MonoBehaviour, IController
         input.Running.performed += OnRunKeyPressed;
         input.Running.canceled += OnRunKeyPressed;
         input.Interact.performed += OnInteractKeyPressed;
-        input.Menu.performed += OnMenuKeyPressed;
     }
 
     public void OnDisconnected()
@@ -41,7 +34,6 @@ public class PlayerController : MonoBehaviour, IController
         input.Movement.canceled -= OnMoveKeyPressed;
         input.Running.performed -= OnRunKeyPressed;
         input.Interact.performed -= OnInteractKeyPressed;
-        input.Menu.performed -= OnMenuKeyPressed;
     }
 
     /************************************************************
@@ -73,16 +65,5 @@ public class PlayerController : MonoBehaviour, IController
     private void OnInteractKeyPressed(InputAction.CallbackContext context)
     {
         interactManager.OnInteract(player);
-    }
-
-    /************************************************************
-    * [메뉴키]
-    * 
-    * 현재 상황을 일시정지 하고서 메뉴창을 열음
-    ************************************************************/
-
-    private void OnMenuKeyPressed(InputAction.CallbackContext context)
-    {
-        menu.OpenMenu();
     }
 }

@@ -4,6 +4,10 @@ public class GameManager : MonoBehaviour
 {
     private TextScriptResource scriptResource;
 
+    [Header("컨트롤러")]
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private MenuController menuController;
+
     private void Awake()
     {
         scriptResource = TextScriptResource.Instance;
@@ -23,6 +27,10 @@ public class GameManager : MonoBehaviour
     private void StartGame()
     {
         LoadScript(GameData.Instance.Chapter);
+
+        // 컨트롤러 연결
+        ControlContext.Instance.ConnectController(playerController);
+        ControlContext.Instance.ConnectController(menuController);
     }
 
     private void LoadScript(Chapter data)

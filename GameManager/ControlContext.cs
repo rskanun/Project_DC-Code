@@ -49,8 +49,7 @@ public class ControlContext
     }
 
     // 현재 등록된 컨트롤러 목록
-    private Dictionary<Type, IController> controllers = new Dictionary<Type, IController>();
-    private HashSet<IController> activeControllers = new HashSet<IController>();
+    private HashSet<IController> connectControllers = new HashSet<IController>();
 
     public ControlContext()
     {
@@ -58,46 +57,19 @@ public class ControlContext
         KeyInput.UI.Enable();
     }
 
-    public void RegisterController(IController controller)
+    public void ConnectController(IController controller)
     {
-        // 컨트롤러 등록
-        controllers.Add(controller.GetType(), controller);
+        controller.OnConnected();
+        connectControllers.Add(controller);
     }
 
-    public void RemoveController(IController controller)
+    public void DisconnectController(IController controller)
     {
-        // 컨트롤러 삭제
-        controllers.Remove(controller.GetType());
-    }
+        // 현재 연결되어 있지 않은 컨트롤러인 경우 무시
+        if (!connectControllers.Contains(controller)) return;
 
-    public void SetState(IController controller)
-    {
-        // 기존 컨트롤러 연결 끊기
-        CurrentState?.OnDisconnected();
-
-        // 새 컨트롤러 연결
-        CurrentState = controller;
-        CurrentState?.OnConnected();
-
-        // 해당 컨트롤러가 등록되지 않은 컨트롤러인 경우
-        if (!controllers.ContainsValue(controller))
-        {
-            // 메모리에 추가
-            RegisterController(controller);
-        }
-    }
-
-    public void SetState(Type type)
-    {
-        // 등록된 컨트롤러가 아니라면 무시
-        if (!controllers.ContainsKey(type)) return;
-
-        // 기존 컨트롤러 연결 끊기
-        CurrentState?.OnDisconnected();
-
-        // 새 컨트롤러 연결
-        CurrentState = controllers[type];
-        CurrentState?.OnConnected();
+        controller.OnDisconnected();
+        connectControllers.Remove(controller);
     }
 
     public void KeyLock()
