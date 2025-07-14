@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TutorialPopup : Popup
+public class TutorialPopup : MonoBehaviour
 {
     [SerializeField] private Button nextButton;
     [SerializeField] private Button prevButton;
@@ -48,5 +48,10 @@ public class TutorialPopup : Popup
         // 페이지 이동 버튼 활성화 설정
         prevButton.interactable = page > 0;
         nextButton.interactable = page < imgObjs.Count - 1;
+    }
+
+    public void Close()
+    {
+        gameObject.SetActive(false);
     }
 }

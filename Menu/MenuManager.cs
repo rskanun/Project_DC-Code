@@ -5,6 +5,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private PauseMenu pauseMenu;
     [SerializeField] private OptionMenu optionMenu;
     [SerializeField] private SaveMenu saveMenu;
+    [SerializeField] private LoadMenu loadMenu;
 
     // 현재 상태
     private IMenu current;
@@ -72,5 +73,10 @@ public class MenuManager : MonoBehaviour
     public void OpenSaveMenu()
     {
         SwapMenu(saveMenu);
+    }
+
+    public void OpenLoadMenu()
+    {
+        SwapMenu(loadMenu);
     }
 }

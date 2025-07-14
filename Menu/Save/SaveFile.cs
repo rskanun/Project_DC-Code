@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class SaveFile : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
-    [SerializeField] private SaveMenu menu;
+    [SerializeField] private BaseSaveLoadMenu menu;
     [SerializeField] private Transform pivot;
     [SerializeField] private TextMeshProUGUI fileNumField;
     [SerializeField] private TextMeshProUGUI titleField;

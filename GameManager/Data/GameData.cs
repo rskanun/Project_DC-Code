@@ -115,8 +115,8 @@ public class GameData : ScriptableObject
         get => _currentQuest;
         set => _currentQuest = value;
     }
-    private HashSet<int> _completedQuests = new HashSet<int>();
-    public HashSet<int> CompletedQuests
+    private List<int> _completedQuests = new List<int>();
+    public List<int> CompletedQuests
     {
         get => _completedQuests;
     }

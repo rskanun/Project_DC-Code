@@ -35,7 +35,7 @@ public class PauseMenu : MonoBehaviour, IMenu
 
     public void OnClickLoad()
     {
-
+        manager.OpenLoadMenu();
     }
 
 
