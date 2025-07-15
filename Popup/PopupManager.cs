@@ -3,48 +3,16 @@ using System.Collections.Generic;
 
 public class PopupManager : MonoBehaviour
 {
-    private static PopupManager _instance;
-    public static PopupManager Instance
-    {
-        get
-        {
-            if (_instance != null) return _instance;
-
-            // 씬 내에서 찾기
-            _instance = FindObjectOfType<PopupManager>();
-
-            if (_instance == null)
-            {
-                // 해당 스크립트를 가진 오브젝트가 없다면 만들기
-                GameObject obj = new GameObject("[PopupManager]");
-                _instance = obj.AddComponent<PopupManager>();
-            }
-
-            return _instance;
-        }
-    }
-
-    private void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-
-            // 씬 전환 시에도 유지
-            DontDestroyOnLoad(gameObject);
-        }
-        else if (_instance != this)
-        {
-            // 현재 instance에 등록된 게 해당 스크립트가 아니라면 파괴
-            Destroy(gameObject);
-        }
-    }
-
     private Queue<GameObject> activePopup = new();
+
+    private void OnEnable()
+    {
+        Confirm.RegisterListener(this);
+    }
 
     public GameObject CreateConfirm()
     {
-        GameObject confirmObj = Instantiate(PopupResource.Instance.ConfirmPrefab);
+        GameObject confirmObj = Instantiate(PopupResource.Instance.ConfirmPrefab, transform);
 
         // 추후 삭제를 위한 팝업 목록에 추가
         activePopup.Enqueue(confirmObj);
@@ -54,7 +22,7 @@ public class PopupManager : MonoBehaviour
 
     public GameObject CreateAlert()
     {
-        GameObject alertObj = Instantiate(PopupResource.Instance.AlertPrefab);
+        GameObject alertObj = Instantiate(PopupResource.Instance.AlertPrefab, transform);
 
         // 추후 삭제를 위한 팝업 목록에 추가
         activePopup.Enqueue(alertObj);

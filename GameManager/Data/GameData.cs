@@ -73,9 +73,9 @@ public class GameData : ScriptableObject
     }
 
     /************************************************************
-    * [맵 데이터]
+    * [위치 데이터]
     * 
-    * 현재 플레이어가 있는 맵에 관한 데이터
+    * 현재 플레이어가 있는 맵과 위치에 관한 데이터
     ************************************************************/
     [SerializeField]
     private MapData _currentMap;
@@ -102,6 +102,14 @@ public class GameData : ScriptableObject
     }
     [SerializeField]
     private MapData errorMap;
+
+    [SerializeField]
+    private Vector2 _pos;
+    public Vector2 Position
+    {
+        get => _pos;
+        set => _pos = value;
+    }
 
     /************************************************************
     * [퀘스트 데이터]

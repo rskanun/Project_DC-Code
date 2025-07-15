@@ -54,7 +54,7 @@ public class SaveFile : MonoBehaviour, ISelectHandler, IDeselectHandler
 
     public void SetInfo(SaveData data)
     {
-        titleField.text = $"{data.chapter.ChapterNum} 챕터 세이브 파일"; // 임시
+        titleField.text = $"{data.chapterData.chapter} 챕터 세이브 파일"; // 임시
         saveTimeField.text = data.saveTime.ToString("HH : mm : ss");
     }
 
