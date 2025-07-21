@@ -11,14 +11,14 @@ public class Confirm
         manager = listener;
     }
 
-    private Confirm(string content, string okTxt, string cancelTxt)
+    private Confirm(string content, string okTxt, string cancelTxt, Color textColor)
     {
         confirm = manager.CreateConfirm().GetComponent<ConfirmUI>();
 
-        confirm.SetConfirm(content, okTxt, cancelTxt);
+        confirm.SetConfirm(content, okTxt, cancelTxt, textColor);
     }
 
-    public static Confirm CreateMsg(string content, string okTxt = "Y", string cancelTxt = "N")
+    public static Confirm CreateMsg(string content, string okTxt = "Y", string cancelTxt = "N", Color? textColor = null)
     {
         if (manager == null)
         {
@@ -26,7 +26,8 @@ public class Confirm
             return null;
         }
 
-        return new Confirm(content, okTxt, cancelTxt);
+        textColor ??= Color.white;
+        return new Confirm(content, okTxt, cancelTxt, textColor.Value);
     }
 
     public Confirm SetOkCallBack(Action handler)

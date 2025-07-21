@@ -16,7 +16,7 @@ public class Map : MonoBehaviour
                 string newID = CreateID();
 
                 // 만약 배정된 값이 중복일 경우 중복되지 않은 값이 나올 때까지 반복
-                while (MapDatabase.Instance.FindMapNameByID(newID) != null)
+                while (MapDatabase.Instance.FindMap(newID) != null)
                 {
                     // 새로운 ID 값 배정
                     newID = CreateID();
@@ -84,7 +84,7 @@ public class Map : MonoBehaviour
         string newID = CreateID();
 
         // 만약 배정된 값이 중복일 경우 중복되지 않은 값이 나올 때까지 반복
-        while (MapDatabase.Instance.FindMapNameByID(newID) != null)
+        while (MapDatabase.Instance.FindMap(newID) != null)
         {
             // 새로운 ID 값 배정
             newID = CreateID();

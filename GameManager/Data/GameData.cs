@@ -127,5 +127,6 @@ public class GameData : ScriptableObject
     public List<int> CompletedQuests
     {
         get => _completedQuests;
+        set => _completedQuests = value;
     }
 }

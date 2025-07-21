@@ -33,10 +33,12 @@ public static class SaveManager
     {
         SaveData saveData = new SaveData();
 
-        saveData.chapterData = GetChapterData();
-        saveData.positionData = GetPositionData();
-        saveData.questData = GetQuestData();
-        saveData.saveTime = DateTime.Now;
+        saveData.header.version = SaveFileInfo.Instance.version;
+        saveData.header.regdate = DateTime.Now;
+
+        saveData.body.chapterData = GetChapterData();
+        saveData.body.positionData = GetPositionData();
+        saveData.body.questData = GetQuestData();
 
         return saveData;
     }

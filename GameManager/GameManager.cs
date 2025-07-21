@@ -1,8 +1,11 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
     private TextScriptResource scriptResource;
+    [SerializeField] private GameObject selected;
 
     private void Awake()
     {
@@ -12,6 +15,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         StartGame();
+        StartCoroutine(Coroutine());
+    }
+
+    private IEnumerator Coroutine()
+    {
+        selected = EventSystem.current.currentSelectedGameObject;
+
+        yield return new WaitForSecondsRealtime(0.1f);
     }
 
     [ContextMenu("Print")]

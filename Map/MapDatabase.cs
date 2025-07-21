@@ -160,11 +160,9 @@ public class MapDatabase : ScriptableObject
     }
 #endif
 
-    public string FindMapNameByID(string id)
+    public MapData FindMap(string id)
     {
-        MapData findMap = maps.FirstOrDefault(map => map.ID == id);
-
-        return findMap == null ? null : findMap.Name;
+        return maps.FirstOrDefault(map => map.ID == id);
     }
 
     public List<string> GetConnectedMap(string mapID)

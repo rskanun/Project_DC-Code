@@ -27,8 +27,18 @@ public abstract class BaseSaveLoadMenu : MonoBehaviour, IMenu
         saveFiles = GetComponentsInChildren<SaveFile>().ToList();
 
         // 파일 선택 애니메이션 구성
+        int index = 0;
         foreach (SaveFile saveFile in saveFiles)
         {
+            if (index >= SaveFileInfo.Instance.FileCount)
+            {
+                // 세이브 파일 개수보다 많다면 파괴
+                Destroy(saveFile.gameObject);
+
+                Debug.LogWarning("최대 생성 가능한 파일 개수를 초과했습니다!");
+                continue;
+            }
+
             saveFile.moveX = boxMoveX;
             saveFile.duration = duration;
         }
@@ -50,25 +60,6 @@ public abstract class BaseSaveLoadMenu : MonoBehaviour, IMenu
         UpdateFilesInfo();
     }
 
-    private List<SaveData> LoadSaveFileInfo()
-    {
-        int i = 1;
-        DateTime time = DateTime.Now;
-
-        List<SaveData> datas = new List<SaveData>();
-        foreach (SaveFile saveFile in saveFiles)
-        {
-            SaveData data = new SaveData();
-
-            data.chapter = new Chapter(i++, 0, 0);
-            data.saveTime = time.AddSeconds(i);
-
-            datas.Add(data);
-        }
-
-        return datas;
-    }
-
     private void UpdateFilesInfo()
     {
         List<SaveData> saveDatas = LoadSaveFileInfo();
@@ -77,6 +68,31 @@ public abstract class BaseSaveLoadMenu : MonoBehaviour, IMenu
         {
             saveFiles[i].SetInfo(saveDatas[i]);
         }
+    }
+
+    private List<SaveData> LoadSaveFileInfo()
+    {
+        for (int i = 0; i < saveFiles.Count; i++)
+        {
+
+        }
+
+        int i = 1;
+        DateTime time = DateTime.Now;
+
+        List<SaveData> datas = new List<SaveData>();
+        foreach (SaveFile saveFile in saveFiles)
+        {
+            SaveData data = new SaveData();
+
+            data.chapterData = new SaveChapterData();
+            data.chapterData.chapter = i++;
+            data.saveTime = time.AddSeconds(i);
+
+            datas.Add(data);
+        }
+
+        return datas;
     }
 
     public void CloseMenu()

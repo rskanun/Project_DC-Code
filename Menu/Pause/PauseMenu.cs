@@ -46,6 +46,15 @@ public class PauseMenu : MonoBehaviour, IMenu
 
     public void OnClickQuit()
     {
-
+        Confirm.CreateMsg("정말로 나가시겠습니까?", "네", "아니오", Color.red)
+            .SetOkCallBack(() =>
+#if UNITY_EDITOR
+                // 에디터에서의 종료
+                UnityEditor.EditorApplication.isPlaying = false
+#else
+                // 빌드된 게임에서의 종료
+                Application.Quit()
+#endif
+            ).SetCancelCallBack(() => EventSystem.current.SetSelectedGameObject(firstSelectButton));
     }
 }

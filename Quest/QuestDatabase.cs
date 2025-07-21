@@ -1,6 +1,8 @@
 using UnityEngine;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using System.IO;
+using System.Linq;
+
 
 
 
@@ -8,20 +10,20 @@ using System.IO;
 using UnityEditor;
 #endif
 
-public class SaveFileInfo : ScriptableObject
+public class QuestDatabase : ScriptableObject
 {
     // 저장 파일 위치
     private const string FILE_DIRECTORY = "Assets/Resources/Option";
-    private const string FILE_PATH = "Assets/Resources/Option/SaveFileInfo.asset";
+    private const string FILE_PATH = "Assets/Resources/Option/QuestDatabase.asset";
 
-    private static SaveFileInfo _instance;
-    public static SaveFileInfo Instance
+    private static QuestDatabase _instance;
+    public static QuestDatabase Instance
     {
         get
         {
             if (_instance != null) return _instance;
 
-            _instance = Resources.Load<SaveFileInfo>("Option/SaveFileInfo");
+            _instance = Resources.Load<QuestDatabase>("Option/QuestDatabase");
 
 #if UNITY_EDITOR
             if (_instance == null)
@@ -43,10 +45,10 @@ public class SaveFileInfo : ScriptableObject
                 }
 
                 // Resource.Load가 실패했을 경우
-                _instance = AssetDatabase.LoadAssetAtPath<SaveFileInfo>(FILE_PATH);
+                _instance = AssetDatabase.LoadAssetAtPath<QuestDatabase>(FILE_PATH);
                 if (_instance == null)
                 {
-                    _instance = CreateInstance<SaveFileInfo>();
+                    _instance = CreateInstance<QuestDatabase>();
                     AssetDatabase.CreateAsset(_instance, FILE_PATH);
                 }
             }
@@ -55,32 +57,28 @@ public class SaveFileInfo : ScriptableObject
         }
     }
 
-    public string version = "1.0";
-    [SerializeField] private string fileExtension = ".dat";
-    [SerializeField] private string fileName = "World_";
+    [SerializeField, FolderPath]
+    private string filePath;
 
-    [SerializeField]
-    private int _fileCount = 10;
-    public int FileCount => _fileCount;
+    [ReadOnly, SerializeField]
+    private List<QuestData> questDatas = new();
 
-    public string FilePath
+#if UNITY_EDITOR
+    [Button(ButtonSizes.Large)]
+    public void LoadMapAssets()
     {
-        get
-        {
-            string path = Path.Combine(Application.persistentDataPath, "SaveFiles");
+        // 폴더가 없는 경우 찾기 종료
+        if (!AssetDatabase.IsValidFolder(filePath)) return;
 
-            // 경로상 파일 검사
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            return path;
-        }
+        string[] guids = AssetDatabase.FindAssets("t:QuestData", new[] { filePath });
+        questDatas = guids.Select(guid => AssetDatabase.LoadAssetAtPath<QuestData>(AssetDatabase.GUIDToAssetPath(guid)))
+            .Where(asset => asset != null)
+            .ToList();
     }
+#endif
 
-    public string GetFileName(int index)
+    public QuestData FindQuest(int id)
     {
-        return fileName + index + fileExtension;
+        return questDatas.FirstOrDefault(quest => quest.ID == id);
     }
 }

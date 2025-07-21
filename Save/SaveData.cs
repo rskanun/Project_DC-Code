@@ -4,10 +4,27 @@ using UnityEngine;
 
 public class SaveData
 {
+    public SaveHeader header;
+    public SaveBody body;
+
+    public SaveData()
+    {
+        header = new SaveHeader();
+        body = new SaveBody();
+    }
+}
+
+public class SaveHeader
+{
+    public string version;
+    public DateTime regdate;
+}
+
+public class SaveBody
+{
     public SaveChapterData chapterData;
     public SavePositionData positionData;
     public SaveQuestData questData;
-    public DateTime saveTime;
 }
 
 public class SaveChapterData
