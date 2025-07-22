@@ -16,7 +16,7 @@ public static class LoadManager
         for (int i = 0; i < SaveFileInfo.Instance.FileCount; i++)
         {
             string name = SaveFileInfo.Instance.GetFileName(i);
-            string path = Path.Combine(Application.persistentDataPath, name);
+            string path = Path.Combine(SaveFileInfo.Instance.FilePath, name);
 
             SaveData loadData = null;
 
@@ -31,8 +31,16 @@ public static class LoadManager
         return loadDatas;
     }
 
+    private static string GetPath(string fileName)
+    {
+        string path = Path.Combine(Application.persistentDataPath, fileName);
+
+        return Path.GetFullPath(path);
+    }
+
     private static SaveData ReadSaveFile(string path)
     {
+        Debug.Log(path);
         // 파일 불러오기
         string readFileStr = File.ReadAllText(path);
 

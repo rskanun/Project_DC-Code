@@ -21,21 +21,21 @@ public class ConfirmUI : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(okButton.gameObject);
     }
 
-    public void SetConfirm(string content, string okTxt = "Y", string cancelTxt = "N", Color? textColor = null)
+    public void SetConfirm(string content, string okTxt = "Y", string cancelTxt = "N")
     {
         contentField.text = content;
         okField.text = okTxt;
         cancelField.text = cancelTxt;
+    }
 
-        // 텍스트 색 설정
-        textColor ??= Color.white;
+    public void SetColor(Color color)
+    {
+        contentField.color = color;
+        okField.color = color;
+        cancelField.color = color;
 
-        contentField.color = textColor.Value;
-        okField.color = textColor.Value;
-        cancelField.color = textColor.Value;
-
-        SetButtonColor(okButton, textColor.Value);
-        SetButtonColor(cancelButton, textColor.Value);
+        SetButtonColor(okButton, color);
+        SetButtonColor(cancelButton, color);
     }
 
     private void SetButtonColor(Button button, Color color)

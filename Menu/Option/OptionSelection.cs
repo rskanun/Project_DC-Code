@@ -26,8 +26,6 @@ public class OptionSelection : MonoBehaviour
 
     private bool _isRolled;
     public bool IsRolled => _isRolled;
-    private OptionType _state = OptionType.Graphic;
-    public OptionType State => _state;
 
     /// <summary>
     /// 다음 항목으로 넘어가기
@@ -89,9 +87,6 @@ public class OptionSelection : MonoBehaviour
             {
                 // 모든 애니메이션이 끝난 경우 현재 위치 업데이트
                 UpdateIndex(index);
-
-                // 업데이트 된 위치 기반으로 무슨 옵션인지 설정
-                _state = (OptionType)((curIdx - optionCount + 1) % optionCount);
 
                 // 다음 이동 위치 받을 준비
                 _isRolled = false;

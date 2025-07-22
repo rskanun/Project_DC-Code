@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum OptionType
@@ -14,7 +15,10 @@ public enum OptionType
 public class OptionMenu : MonoBehaviour, IMenu
 {
     [SerializeField] private OptionSelection selection;
-    [SerializeField] private OptionWindow window;
+    [SerializeField] private Dictionary<OptionType, OptionWindow> windows;
+
+    private OptionType state;
+    private OptionWindow currentWindow;
 
     public void OpenMenu()
     {
@@ -24,6 +28,11 @@ public class OptionMenu : MonoBehaviour, IMenu
     public void CloseMenu()
     {
         gameObject.SetActive(false);
+    }
+
+    public void SetState(OptionType state)
+    {
+        this.state = state;
     }
 
     /// <summary>
@@ -50,6 +59,10 @@ public class OptionMenu : MonoBehaviour, IMenu
         StartCoroutine(OptionChangeAnimation(() => selection.Prev()));
     }
 
+    /// <summary>
+    /// 특정 번째 항목으로 이동
+    /// </summary>
+    /// <param name="index">이동할 항목 순서</param>
     public void SelectItem(int index)
     {
         // 옵션 선택 애니메이션이 실행되고 있는 경우 무시
@@ -65,16 +78,16 @@ public class OptionMenu : MonoBehaviour, IMenu
         selectionAnimation?.Invoke();
 
         // 애니메이션 실행 간에 옵션 창 비활성화
-        window.HideWindow();
+        currentWindow.HideWindow();
 
         // 옵션 선택 애니메이션이 끝날 때까지 대기
         yield return new WaitWhile(() => selection.IsRolled);
 
-        // 옵션 창에 활성화 할 옵션 타입 명시
-        window.SetActiveOption(selection.State);
+        // 애니메이션 종료 후 새 옵션 창 활성화
+        windows[state].ShowWindow();
 
-        // 옵셩 창 다시 활성화
-        window.ShowWindow();
+        // 현재 상태 업데이트
+        currentWindow = windows[state];
     }
 
     /************************************************************
@@ -82,4 +95,6 @@ public class OptionMenu : MonoBehaviour, IMenu
     * 
     * 
     ************************************************************/
+
+
 }

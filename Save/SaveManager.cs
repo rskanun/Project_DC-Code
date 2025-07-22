@@ -14,7 +14,6 @@ public static class SaveManager
     {
         // 현재 데이터를 세이브 데이터로 변환
         SaveData data = GetCurrentData();
-        Debug.Log(data.chapterData == null);
 
         // 파일 저장
         string name = SaveFileInfo.Instance.GetFileName(index);
@@ -31,6 +30,7 @@ public static class SaveManager
         // 데이터를 Json으로 변환
         string json = JsonUtility.ToJson(data);
         string encryptJson = Encrypt(json);
+        Debug.Log(json);
 
         File.WriteAllText(path, encryptJson);
     }

@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
@@ -69,10 +70,26 @@ public class OptionData : ScriptableObject
     * 게임 그래픽과 관련된 데이터
     ************************************************************/
 
+    [Title("그래픽")]
+    [SerializeField]
+    private float _brightnessLevel;
+    public float BrightnessLevel
+    {
+        get => _brightnessLevel;
+        set => _brightnessLevel = value;
+    }
+
     [SerializeField]
     private Vector2 _resolution;
     public Vector2 Resolution => _resolution;
 
+    [SerializeField]
+    private DisplayMode _displayMode;
+    public DisplayMode DisplayMode
+    {
+        get => _displayMode;
+        set => _displayMode = value;
+    }
 
     /************************************************************
     * [키 배치 데이터]
@@ -80,12 +97,15 @@ public class OptionData : ScriptableObject
     * 게임 내 키 배치와 관련된 데이터
     ************************************************************/
 
+    //[Title("컨트롤")]
+
     /************************************************************
     * [게임 플레이 데이터]
     * 
     * 게임 플레이와 연관된 옵션 데이터
     ************************************************************/
 
+    [Title("게임 플레이")]
     [SerializeField]
     private string _hudType;
     public string HudType => _hudType;
@@ -102,4 +122,11 @@ public class OptionData : ScriptableObject
         set => _fontSize = value;
     }
 
+    /************************************************************
+    * [기타 데이터]
+    * 
+    * 그 외 분류하기 힘든 기타 옵션 데이터
+    ************************************************************/
+
+    //[Title("기타")]
 }

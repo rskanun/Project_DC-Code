@@ -46,7 +46,8 @@ public class PauseMenu : MonoBehaviour, IMenu
 
     public void OnClickQuit()
     {
-        Confirm.CreateMsg("정말로 나가시겠습니까?", "네", "아니오", Color.red)
+        Confirm.CreateMsg("정말로 나가시겠습니까?", "네", "아니오")
+            .SetColor(new Color32(0xCC, 0x06, 0x06, 0xFF))
             .SetOkCallBack(() =>
 #if UNITY_EDITOR
                 // 에디터에서의 종료
