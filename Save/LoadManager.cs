@@ -12,13 +12,20 @@ public static class LoadManager
     {
         List<SaveData> loadDatas = new List<SaveData>();
 
-        // 모든 세이브 파일 불러오기
-        DirectoryInfo directory = new DirectoryInfo(SaveFileInfo.Instance.FilePath);
-
-        FileInfo[] fileInfos = directory.GetFiles();
+        // 파일 개수만큼 불러오기
         for (int i = 0; i < SaveFileInfo.Instance.FileCount; i++)
         {
-            여기
+            string name = SaveFileInfo.Instance.GetFileName(i);
+            string path = Path.Combine(Application.persistentDataPath, name);
+
+            SaveData loadData = null;
+
+            // 경로상에 파일이 존재하는 경우에만 읽어오기
+            if (File.Exists(path))
+                loadData = ReadSaveFile(path);
+
+            // 불러온 데이터 목록에 추가
+            loadDatas.Add(loadData);
         }
 
         return loadDatas;
@@ -59,9 +66,9 @@ public static class LoadManager
 
     private static void ApplySaveData(SaveData applyData)
     {
-        ApplyChapterData(applyData.body.chapterData);
-        ApplyPositionData(applyData.body.positionData);
-        ApplyQuestData(applyData.body.questData);
+        ApplyChapterData(applyData.chapterData);
+        ApplyPositionData(applyData.positionData);
+        ApplyQuestData(applyData.questData);
     }
 
     private static void ApplyChapterData(SaveChapterData chapterData)

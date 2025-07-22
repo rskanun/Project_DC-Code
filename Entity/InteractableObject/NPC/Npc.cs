@@ -47,10 +47,10 @@ public class Npc : InteractableObject
     {
         // 완료되지 않고, 선행퀘가 없거나 완료 예정 혹은 완료된 수주 가능 퀘스트만 리턴
         return quests.FirstOrDefault(quest
-            => QuestManager.Instance.IsCompletedQuest(quest) == false
+            => QuestManager.IsCompletedQuest(quest) == false
                 && quest != GameData.Instance.CurrentQuest
                 && (quest.RequiredQuest == null
-                || QuestManager.Instance.IsCompletedQuest(quest.RequiredQuest)));
+                || QuestManager.IsCompletedQuest(quest.RequiredQuest)));
     }
 
     public QuestData GetCompletableQuest()

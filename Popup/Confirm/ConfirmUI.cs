@@ -60,7 +60,6 @@ public class ConfirmUI : MonoBehaviour
 
     public void OnClickOk()
     {
-        Debug.Log(okCallBack == null);
         okCallBack?.Invoke();
 
         // 버튼 클릭 후 삭제 처리

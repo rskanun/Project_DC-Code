@@ -83,7 +83,7 @@ public class TalkManager : MonoBehaviour
         if (completeQuest != null)
         {
             // 퀘스트 완료
-            QuestManager.Instance.CompleteCurrentQuest();
+            QuestManager.CompleteCurrentQuest();
 
             return true;
         }
@@ -97,7 +97,7 @@ public class TalkManager : MonoBehaviour
         if (acceptQuest != null)
         {
             // 퀘스트 수주
-            QuestManager.Instance.AcceptQuest(acceptQuest);
+            QuestManager.AcceptQuest(acceptQuest);
 
             return true;
         }

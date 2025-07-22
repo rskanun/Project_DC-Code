@@ -62,37 +62,12 @@ public abstract class BaseSaveLoadMenu : MonoBehaviour, IMenu
 
     private void UpdateFilesInfo()
     {
-        List<SaveData> saveDatas = LoadSaveFileInfo();
+        List<SaveData> saveDatas = LoadManager.LoadAllSaveFiles();
 
         for (int i = 0; i < saveDatas.Count && i < saveFiles.Count; i++)
         {
             saveFiles[i].SetInfo(saveDatas[i]);
         }
-    }
-
-    private List<SaveData> LoadSaveFileInfo()
-    {
-        for (int i = 0; i < saveFiles.Count; i++)
-        {
-
-        }
-
-        int i = 1;
-        DateTime time = DateTime.Now;
-
-        List<SaveData> datas = new List<SaveData>();
-        foreach (SaveFile saveFile in saveFiles)
-        {
-            SaveData data = new SaveData();
-
-            data.chapterData = new SaveChapterData();
-            data.chapterData.chapter = i++;
-            data.saveTime = time.AddSeconds(i);
-
-            datas.Add(data);
-        }
-
-        return datas;
     }
 
     public void CloseMenu()

@@ -5,13 +5,13 @@ using UnityEngine.EventSystems;
 
 public class SaveFile : MonoBehaviour, ISelectHandler, IDeselectHandler
 {
-    [SerializeField] private BaseSaveLoadMenu menu;
-    [SerializeField] private Transform pivot;
-    [SerializeField] private TextMeshProUGUI fileNumField;
-    [SerializeField] private TextMeshProUGUI titleField;
-    [SerializeField] private TextMeshProUGUI saveTimeField;
-    [SerializeField] private CanvasGroup saveButton;
-    [SerializeField] private CanvasGroup deleteButton;
+    [SerializeField] protected BaseSaveLoadMenu menu;
+    [SerializeField] protected Transform pivot;
+    [SerializeField] protected TextMeshProUGUI fileNumField;
+    [SerializeField] protected TextMeshProUGUI titleField;
+    [SerializeField] protected TextMeshProUGUI saveTimeField;
+    [SerializeField] protected CanvasGroup actionButton;
+    [SerializeField] protected CanvasGroup deleteButton;
 
     private int index;
     private bool isSelected;
@@ -48,21 +48,39 @@ public class SaveFile : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         pivot.localPosition = pivotPos;
 
-        saveButton.alpha = 0.0f;
+        actionButton.alpha = 0.0f;
         deleteButton.alpha = 0.0f;
     }
 
-    public void SetInfo(SaveData data)
+    public virtual void SetInfo(SaveData data)
     {
-        titleField.text = $"{data.chapterData.chapter} 챕터 세이브 파일"; // 임시
-        saveTimeField.text = data.saveTime.ToString("HH : mm : ss");
+        titleField.text = GetFileTitle(data);
+        saveTimeField.text = GetRegDate(data);
+
+        deleteButton.gameObject.SetActive(data != null);
+    }
+
+    private string GetFileTitle(SaveData saveData)
+    {
+        // 세이브 데이터가 존재한다면 해당 챕터 기반으로 제목 짓기 (임시)
+        return saveData != null
+            ? $"{saveData.chapterData.chapter} 챕터 세이브 파일"
+            : "빈 세이브 파일";
+    }
+
+    private string GetRegDate(SaveData saveData)
+    {
+        // 세이브 데이터가 존재하는 경우에만 생성 시간 읽어오기
+        return saveData != null
+            ? saveData.regdate.ToString("HH : mm : ss")
+            : "";
     }
 
     public Sequence SelectAnimation()
     {
         return DOTween.Sequence()
             .Join(pivot.DOLocalMoveX(pivotPos.x - moveX, duration))
-            .Join(saveButton.DOFade(1.0f, duration))
+            .Join(actionButton.DOFade(1.0f, duration))
             .Join(deleteButton.DOFade(1.0f, duration))
             .SetUpdate(true);
     }
@@ -71,7 +89,7 @@ public class SaveFile : MonoBehaviour, ISelectHandler, IDeselectHandler
     {
         return DOTween.Sequence()
             .Join(pivot.DOLocalMoveX(pivotPos.x, duration))
-            .Join(saveButton.DOFade(0.0f, duration))
+            .Join(actionButton.DOFade(0.0f, duration))
             .Join(deleteButton.DOFade(0.0f, duration))
             .SetUpdate(true);
     }

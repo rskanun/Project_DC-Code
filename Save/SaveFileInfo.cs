@@ -55,7 +55,7 @@ public class SaveFileInfo : ScriptableObject
         }
     }
 
-    public string version = "1.0";
+    public string version => "1.0";
     [SerializeField] private string fileExtension = ".dat";
     [SerializeField] private string fileName = "World_";
 
