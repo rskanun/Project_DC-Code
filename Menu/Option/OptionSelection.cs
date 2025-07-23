@@ -28,22 +28,6 @@ public class OptionSelection : MonoBehaviour
     public bool IsRolled => _isRolled;
 
     /// <summary>
-    /// 다음 항목으로 넘어가기
-    /// </summary>
-    public void Next()
-    {
-        JumpTo(curIdx + 1);
-    }
-
-    /// <summary>
-    /// 이전 항목으로 돌아가기
-    /// </summary>
-    public void Prev()
-    {
-        JumpTo(curIdx - 1);
-    }
-
-    /// <summary>
     /// 특정 index로 바로 이동
     /// </summary>
     public void JumpTo(int index)

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public enum DisplayMode
 {
@@ -9,56 +8,42 @@ public enum DisplayMode
 
 public class GraphicSettingWindow : OptionWindow
 {
-    [SerializeField] private OptionSlider brightnessSlider;
-    [SerializeField] private Dropdown resolutionDrowdown;
-    [SerializeField] private ToggleGroup displayModeToggle;
-
-    private float brightnessLevel;
-    private Vector2 resolution;
-    private DisplayMode displayMode;
+    [SerializeField] private OptionSliderManager brightnessSlider;
+    [SerializeField] private VectorDropdownManager resolutionDrowdown;
+    [SerializeField] private OptionToggleManager displayModeToggle;
 
     protected override void Setup()
     {
+        OptionData optionData = OptionData.Instance;
+
         // 옵션 데이터를 기반으로 UI 셋팅
-        brightnessLevel = OptionData.Instance.BrightnessLevel;
-        brightnessSlider.value = brightnessLevel / 100.0f;
-
-        resolution = OptionData.Instance.Resolution;
-        resolutionDrowdown.value = FindDropOption(resolution);
-
-        displayMode = OptionData.Instance.DisplayMode;
-        displayModeToggle.
+        brightnessSlider.SetAmount(optionData.BrightnessLevel);
+        resolutionDrowdown.SelectOption(optionData.Resolution);
+        displayModeToggle.SelectOption(optionData.DisplayMode);
     }
 
-    private int FindDropOption(Vector2 resolution)
+    public void OnChangedBrightnessLevel(int level)
     {
-        string findOption = $"{resolution.x} x {resolution.y}";
-
-        return resolutionDrowdown.options
-            .FindIndex(option => option.text == findOption);
-    }
-
-    public void SetBrightnessLevel(float level)
-    {
-        // 변경 사항이 존재할 경우 변경 체크
-        if (OptionData.Instance.BrightnessLevel != level) isChanged = true;
-
         // 화면 밝기 변화 적용
 
         // 값 업데이트
-        this.brightnessLevel = level;
+        OptionData.Instance.BrightnessLevel = level;
     }
 
-    public void SetResoulution(Vector2 resolution)
+    public void OnChangedResoulution(Vector2 resolution)
     {
+        // 해상도 적용
 
-
-        this.resolution = resolution;
+        // 값 업데이트
+        OptionData.Instance.Resolution = resolution;
     }
 
-    public void SetDisplayMode(DisplayMode displayMode)
+    public void OnChangedDisplayMode(object enumObj)
     {
+        // DisplayMode enum 값만 받기
+        if (enumObj.GetType() != typeof(DisplayMode)) return;
 
-        this.displayMode = displayMode;
+        // 값 업데이트
+        OptionData.Instance.DisplayMode = (DisplayMode)enumObj;
     }
 }

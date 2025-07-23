@@ -72,8 +72,8 @@ public class OptionData : ScriptableObject
 
     [Title("그래픽")]
     [SerializeField]
-    private float _brightnessLevel;
-    public float BrightnessLevel
+    private int _brightnessLevel;
+    public int BrightnessLevel
     {
         get => _brightnessLevel;
         set => _brightnessLevel = value;
@@ -81,7 +81,11 @@ public class OptionData : ScriptableObject
 
     [SerializeField]
     private Vector2 _resolution;
-    public Vector2 Resolution => _resolution;
+    public Vector2 Resolution
+    {
+        get => _resolution;
+        set => _resolution = value;
+    }
 
     [SerializeField]
     private DisplayMode _displayMode;
@@ -89,6 +93,37 @@ public class OptionData : ScriptableObject
     {
         get => _displayMode;
         set => _displayMode = value;
+    }
+
+    /************************************************************
+    * [음량 데이터]
+    * 
+    * 게임 내 음량과 관련된 데이터
+    ************************************************************/
+
+    [Title("음량")]
+    [SerializeField]
+    private int _masterVolume;
+    public int MasterVolume
+    {
+        get => _masterVolume;
+        set => _masterVolume = value;
+    }
+
+    [SerializeField]
+    private int _bgmVolume;
+    public int BgmVolume
+    {
+        get => _bgmVolume;
+        set => _bgmVolume = value;
+    }
+
+    [SerializeField]
+    private int _sfxVolume;
+    public int SfxVolume
+    {
+        get => _sfxVolume;
+        set => _sfxVolume = value;
     }
 
     /************************************************************
@@ -107,12 +142,12 @@ public class OptionData : ScriptableObject
 
     [Title("게임 플레이")]
     [SerializeField]
-    private string _hudType;
-    public string HudType => _hudType;
-
-    [SerializeField]
-    private string _hudSize;
-    public string HudSize => _hudSize;
+    private HudType _hudType;
+    public HudType HudType
+    {
+        get => _hudType;
+        set => _hudType = value;
+    }
 
     [SerializeField]
     private float _fontSize = 52.5f;
