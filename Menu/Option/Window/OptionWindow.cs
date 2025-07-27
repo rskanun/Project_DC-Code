@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public abstract class OptionWindow : MonoBehaviour
@@ -38,4 +38,10 @@ public abstract class OptionWindow : MonoBehaviour
     {
         // 현재 상태 저장
     }
+
+    /// <summary>
+    /// 옵션값을 초기값으로 되돌리기
+    /// </summary>
+    [Button("초기화", ButtonSizes.Large)]
+    public abstract void RestoreDefault();
 }

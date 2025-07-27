@@ -1,6 +1,9 @@
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class OptionData : ScriptableObject
 {
@@ -63,6 +66,8 @@ public class OptionData : ScriptableObject
     {
         get { return _typingSpeed; }
     }
+    private float _initTypingSpeed;
+    public float InitTypingSpeed => _initTypingSpeed;
 
     /************************************************************
     * [그래픽 데이터]
@@ -78,6 +83,8 @@ public class OptionData : ScriptableObject
         get => _brightnessLevel;
         set => _brightnessLevel = value;
     }
+    private int _initBrightnessLevel;
+    public int InitBrightnessLevel => _initBrightnessLevel;
 
     [SerializeField]
     private Vector2 _resolution;
@@ -86,14 +93,18 @@ public class OptionData : ScriptableObject
         get => _resolution;
         set => _resolution = value;
     }
+    private Vector2 _initResolution;
+    public Vector2 InitResolution => _initResolution;
 
     [SerializeField]
-    private DisplayMode _displayMode;
-    public DisplayMode DisplayMode
+    private FullScreenMode _displayMode;
+    public FullScreenMode DisplayMode
     {
         get => _displayMode;
         set => _displayMode = value;
     }
+    private FullScreenMode _initDisplayMode;
+    public FullScreenMode InitDisplayMode => _initDisplayMode;
 
     /************************************************************
     * [음량 데이터]
@@ -109,6 +120,8 @@ public class OptionData : ScriptableObject
         get => _masterVolume;
         set => _masterVolume = value;
     }
+    private int _initMasterVolume;
+    public int InitMasterVolume => _initMasterVolume;
 
     [SerializeField]
     private int _bgmVolume;
@@ -117,6 +130,8 @@ public class OptionData : ScriptableObject
         get => _bgmVolume;
         set => _bgmVolume = value;
     }
+    private int _initBgmVolume;
+    public int InitBgmVolume => _initBgmVolume;
 
     [SerializeField]
     private int _sfxVolume;
@@ -125,6 +140,8 @@ public class OptionData : ScriptableObject
         get => _sfxVolume;
         set => _sfxVolume = value;
     }
+    private int _initSfxVolume;
+    public int InitSfxVolume => _initSfxVolume;
 
     /************************************************************
     * [키 배치 데이터]
@@ -148,6 +165,8 @@ public class OptionData : ScriptableObject
         get => _hudType;
         set => _hudType = value;
     }
+    private HudType _initHudType;
+    public HudType InitHudType => _initHudType;
 
     [SerializeField]
     private float _fontSize = 52.5f;
@@ -156,6 +175,18 @@ public class OptionData : ScriptableObject
         get => _fontSize;
         set => _fontSize = value;
     }
+    private float _initFontSize;
+    public float InitFontSize => _initFontSize;
+
+    [SerializeField]
+    private bool _hasGlasses;
+    public bool HasGlasses
+    {
+        get => _hasGlasses;
+        set => _hasGlasses = value;
+    }
+    private bool _initHasGlasses;
+    public bool InitHasGlasses => _initHasGlasses;
 
     /************************************************************
     * [기타 데이터]
@@ -164,4 +195,25 @@ public class OptionData : ScriptableObject
     ************************************************************/
 
     //[Title("기타")]
+
+    private void OnValidate()
+    {
+        // 실행 중이거나 실행 준비 중이면 무시
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        // 인스펙터창에서 변수값을 조정하면, 해당 값을 초기값으로 설정
+        _initTypingSpeed = _typingSpeed;
+
+        _initBrightnessLevel = _brightnessLevel;
+        _initResolution = _resolution;
+        _initDisplayMode = _displayMode;
+
+        _initMasterVolume = _masterVolume;
+        _initBgmVolume = _bgmVolume;
+        _initSfxVolume = _sfxVolume;
+
+        _initHudType = _hudType;
+        _initFontSize = _fontSize;
+    }
 }

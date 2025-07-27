@@ -54,8 +54,6 @@ public class OptionMenu : MonoBehaviour, IMenu
         windows.Clear();
     }
 
-    public void SetState(DisplayMode test) { }
-
     /// <summary>
     /// 다음 항목으로 넘어가기
     /// </summary>
