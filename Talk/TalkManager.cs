@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class TalkManager : MonoBehaviour
@@ -107,6 +106,9 @@ public class TalkManager : MonoBehaviour
 
     private IEnumerator ReadLines(Npc npc, List<Line> lines)
     {
+        // 스킵 버튼 오류 방지용
+        yield return null;
+
         isTalking = true;
 
         while (lineNum < lines.Count)

@@ -16,12 +16,18 @@ public class QuestNavigator : MonoBehaviour
     {
         // 씬 로드 이벤트 등록
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        // 퀘스트 이벤트 등록
+        QuestManager.Instance.AddListener(OnStart);
     }
 
     private void OnDisable()
     {
         // 씬 로드 이벤트 해제
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        // 퀘스트 이벤트 해제
+        QuestManager.Instance.RemoveListener(OnStart);
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

@@ -7,6 +7,14 @@ public class TextManager : MonoBehaviour
 
     public bool IsPrinting => ui.IsPrinting;
 
+    public void OnMapChanged()
+    {
+        MapData current = GameData.Instance.CurrentMap;
+
+        // 현재 플레이어가 있는 위치에 따라 대화창 스킨 바꾸기
+        ui.SetDialogueSkin(current.IsAbyss);
+    }
+
     /************************************************************
     * [대화 출력]
     * 
