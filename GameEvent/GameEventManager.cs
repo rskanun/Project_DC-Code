@@ -52,10 +52,11 @@ public class GameEventManager : ScriptableObject
     }
 
     // 게임 이벤트 종류
-    [SerializeField] private GameEvent questEvent;
+    [SerializeField]
+    private GameEvent mapEvent;
 
-    public void NotifyQuestUpdateEvent()
+    public void NotifyMapUpdate()
     {
-        questEvent.NotifyUpdate();
+        mapEvent.NotifyUpdate();
     }
 }

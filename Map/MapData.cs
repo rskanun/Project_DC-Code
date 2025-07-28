@@ -16,10 +16,15 @@ public class MapData
     private string _sceneName;
     public string SceneName { get => _sceneName; }
 
-    public MapData(string id, string name, Scene scene)
+    [ReadOnly, SerializeField]
+    private bool _isAbyss;
+    public bool IsAbyss { get => _isAbyss; }
+
+    public MapData(string id, string name, Scene scene, bool isAbyss)
     {
         _id = id;
         _name = name;
         _sceneName = scene.name;
+        _isAbyss = isAbyss;
     }
 }

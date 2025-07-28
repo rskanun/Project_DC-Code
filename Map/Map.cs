@@ -32,7 +32,11 @@ public class Map : MonoBehaviour
 
     [SerializeField]
     private string _name;
-    public string Name { get => _name; }
+    public string Name => _name;
+
+    [SerializeField]
+    private bool _isAbyss;
+    public bool IsAbyss => _isAbyss;
 
     private void Reset()
     {
@@ -46,6 +50,9 @@ public class Map : MonoBehaviour
 
         // 해당 맵이 로드되었다면, 현재 맵을 변경
         GameData.Instance.CurrentMap = GetMapData();
+
+        // 맵 변경 알림
+        GameEventManager.Instance.NotifyMapUpdate();
     }
 
     public string CreateID()
@@ -62,7 +69,7 @@ public class Map : MonoBehaviour
 
     public MapData GetMapData()
     {
-        return new MapData(ID, Name, gameObject.scene);
+        return new MapData(ID, Name, gameObject.scene, IsAbyss);
     }
 
 #if UNITY_EDITOR

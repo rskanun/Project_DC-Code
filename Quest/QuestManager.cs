@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -51,6 +53,18 @@ public class QuestManager : ScriptableObject
         }
     }
 
+    private Action updateHandler;
+
+    public void AddListener(Action listener)
+    {
+        updateHandler += listener;
+    }
+
+    public void RemoveListener(Action listener)
+    {
+        updateHandler -= listener;
+    }
+
     public void AcceptQuest(QuestData quest)
     {
         if (quest != null && IsCompletedQuest(quest) == false)
@@ -58,7 +72,7 @@ public class QuestManager : ScriptableObject
             GameData.Instance.CurrentQuest = quest;
 
             // 퀘스트 변경 알림
-            GameEventManager.Instance.NotifyQuestUpdateEvent();
+            updateHandler?.Invoke();
         }
     }
 
@@ -71,7 +85,7 @@ public class QuestManager : ScriptableObject
             GameData.Instance.CurrentQuest = null; // 이후 현재 퀘스트 초기화
 
             // 퀘스트 변경 알림
-            GameEventManager.Instance.NotifyQuestUpdateEvent();
+            updateHandler?.Invoke();
         }
     }
 
