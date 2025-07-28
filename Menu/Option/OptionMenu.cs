@@ -50,6 +50,10 @@ public class OptionMenu : MonoBehaviour, IMenu
 
     public void CloseMenu()
     {
+        // 현재 열린 창 닫기
+        currentWindow.HideWindow();
+
+        // 나머지 값들 정리
         gameObject.SetActive(false);
         windows.Clear();
     }

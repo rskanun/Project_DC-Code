@@ -1,11 +1,8 @@
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Components;
 using UnityEngine.UI;
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 public class OptionLabel : MonoBehaviour
 {
@@ -43,7 +40,7 @@ public class OptionLabel : MonoBehaviour
     /// <summary>
     /// 텍스트 필드 사이즈에 따른 이미지 사이즈 조정
     /// </summary>
-    [ContextMenu("Resize")]
+    [Button("Resize", ButtonSizes.Large)]
     public void Resize()
     {
         if (rectTransform == null || textField == null || line == null) return;

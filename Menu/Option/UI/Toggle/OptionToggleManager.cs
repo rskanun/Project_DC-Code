@@ -24,6 +24,7 @@ public class OptionToggleManager : MonoBehaviour
     private string typeName;
 
     [ShowInInspector, LabelText("Enum Type")]
+    [OnValueChanged(nameof(OnTypeChanged))]
     [ValueDropdown(nameof(AvailableEnumTypes), IsUniqueList = true)]
     public Type ValueType
     {
@@ -61,6 +62,15 @@ public class OptionToggleManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void OnTypeChanged()
+    {
+        // 해당 매니져가 관리하는 Toggle로부터 알리기
+        foreach (OptionToggle toggle in toggles)
+        {
+            toggle.OnTypeChanged();
+        }
     }
 #endif
 

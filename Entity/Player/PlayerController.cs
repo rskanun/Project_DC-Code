@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -29,10 +30,20 @@ public class PlayerController : Controller
         input.Movement.performed -= OnMoveKeyPressed;
         input.Movement.canceled -= OnMoveKeyPressed;
         input.Running.performed -= OnRunKeyPressed;
+        input.Running.canceled -= OnRunKeyPressed;
         input.Interact.performed -= OnInteractKeyPressed;
 
         // 플레이어의 움직임 멈추기
         player.MovingPlayer(Vector2.zero);
+    }
+
+    [Button("Reload", ButtonSizes.Large)]
+    public void Reconnecting()
+    {
+        OnDisconnected();
+        OnConnected();
+
+        Debug.Log("리로드 끝");
     }
 
     /************************************************************

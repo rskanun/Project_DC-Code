@@ -98,8 +98,9 @@ public class OptionToggle : MonoBehaviour
         background.sprite = toggle.isOn ? onSprite : offSprite;
     }
 
-    public void OnChangedType()
+    public void OnTypeChanged()
     {
+        // 타입이 바뀌면 기존 변수 버리기
         _value = string.Empty;
     }
 

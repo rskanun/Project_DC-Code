@@ -1,15 +1,22 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionSelection : MonoBehaviour
 {
+    [SerializeField] private Image clockImage;
     [SerializeField] private GameObject optionPivot;
     [SerializeField] private GameObject firstSelect;
     [SerializeField] private List<TextMeshProUGUI> options;
 
-    [Header("애니메이션 설정")]
+    [Title("시계 설정")]
+    [SerializeField] private Sprite normalClock;
+    [SerializeField] private Sprite abyssClock;
+
+    [Title("애니메이션 설정")]
     [SerializeField] private float angle = 17.5f;
     [SerializeField] private float selectX = 805.0f;
     [SerializeField] private float selectSize = 83.38f;
@@ -26,6 +33,14 @@ public class OptionSelection : MonoBehaviour
 
     private bool _isRolled;
     public bool IsRolled => _isRolled;
+
+    private void OnEnable()
+    {
+        MapData current = GameData.Instance.CurrentMap;
+
+        // 현실과 심연에 따른 시계 스킨 바꾸기
+        clockImage.sprite = current.IsAbyss ? abyssClock : normalClock;
+    }
 
     /// <summary>
     /// 특정 index로 바로 이동

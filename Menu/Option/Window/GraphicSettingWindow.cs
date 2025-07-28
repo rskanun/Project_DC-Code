@@ -50,7 +50,7 @@ public class GraphicSettingWindow : OptionWindow
     public void OnChangedDisplayMode(object enumObj)
     {
         // DisplayMode enum 값만 받기
-        if (enumObj.GetType() != typeof(FullScreenMode)) return;
+        if (enumObj == null || enumObj.GetType() != typeof(FullScreenMode)) return;
 
         FullScreenMode mode = (FullScreenMode)enumObj;
 
