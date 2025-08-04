@@ -1,11 +1,11 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 
 public class GameManager : MonoBehaviour
 {
     private TextScriptResource scriptResource;
-    [SerializeField] private GameObject selected;
 
     private void Awake()
     {
@@ -14,21 +14,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        InitGame();
         StartGame();
-        StartCoroutine(Coroutine());
-    }
-
-    private IEnumerator Coroutine()
-    {
-        selected = EventSystem.current.currentSelectedGameObject;
-
-        yield return new WaitForSecondsRealtime(0.1f);
-    }
-
-    [ContextMenu("Print")]
-    public void Print()
-    {
-        Debug.Log(Time.timeScale);
     }
 
     /************************************************************
@@ -37,13 +24,18 @@ public class GameManager : MonoBehaviour
     * 게임의 전체적인 흐름 제어
     ************************************************************/
 
-    private void StartGame()
+    private void InitGame()
     {
+        LoadLocalized();
         LoadScript(GameData.Instance.Chapter);
 
         // 컨트롤러 연결
         ControlContext.Instance.ConnectController(typeof(PlayerController));
         ControlContext.Instance.ConnectController(typeof(MenuController));
+    }
+
+    private void StartGame()
+    {
     }
 
     private void LoadScript(Chapter data)
@@ -53,5 +45,12 @@ public class GameManager : MonoBehaviour
         int subChapter = data.SubChapterNum;
 
         scriptResource.LoadScript(chapter, root, subChapter);
+    }
+
+    private void LoadLocalized()
+    {
+        // 옵션 로컬리제이션 로드
+        LocalizationSettings.StringDatabase.PreloadTables("Pause_Menu_Table");
+        LocalizationSettings.StringDatabase.PreloadTables("Option_Table");
     }
 }

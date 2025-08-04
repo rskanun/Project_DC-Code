@@ -12,6 +12,7 @@ public class GamePlaySettingWindow : OptionWindow
     [SerializeField] private OptionToggleManager hudTypeToggle;
     [SerializeField] private OptionSliderManager dialogueFontSizeSlider;
     [SerializeField] private OptionToggleManager glassesTypeToggle;
+    [SerializeField] private DifficultyOption difficultyOption;
 
     private OptionData optionData;
 
@@ -23,6 +24,7 @@ public class GamePlaySettingWindow : OptionWindow
         hudTypeToggle.SelectOption(optionData.HudType);
         dialogueFontSizeSlider.SetAmount(optionData.FontSize);
         glassesTypeToggle.SelectOption(optionData.HasGlasses);
+        difficultyOption.SetDifficulty(optionData.Difficulty);
     }
 
     public void OnChangedHudType(object enumObj)
@@ -73,6 +75,20 @@ public class GamePlaySettingWindow : OptionWindow
     }
 
     private void ApplyHasGlasses(bool hasGlasses)
+    {
+
+    }
+
+    public void OnChangedDifficulty(Difficulty difficulty)
+    {
+        // 난이도 변경 적용
+        ApplyDifficulty(difficulty);
+
+        // 값 업데이트
+        OptionData.Instance.Difficulty = difficulty;
+    }
+
+    private void ApplyDifficulty(Difficulty difficulty)
     {
 
     }

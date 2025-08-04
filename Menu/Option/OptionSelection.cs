@@ -42,6 +42,29 @@ public class OptionSelection : MonoBehaviour
         clockImage.sprite = current.IsAbyss ? abyssClock : normalClock;
     }
 
+    private void OnDisable()
+    {
+        // 옵션 본래 위치로 되돌리기
+        InitState();
+    }
+
+    private void InitState()
+    {
+        // pivot 원래 위치로 되돌리기
+        optionPivot.transform.rotation = Quaternion.identity;
+
+        // 이전 옵션 되돌리기
+        options[curIdx].transform.localPosition = new Vector3(deselectX, options[curIdx].transform.localPosition.y);
+        options[curIdx].fontSize = deselectSize;
+        options[curIdx].alpha = normalFontAlpha;
+
+        // 초기 옵션 선택
+        curIdx = (minIdx + maxIdx) / 2;
+        options[curIdx].transform.localPosition = new Vector3(selectX, options[curIdx].transform.localPosition.y);
+        options[curIdx].fontSize = selectSize;
+        options[curIdx].alpha = 1.0f;
+    }
+
     /// <summary>
     /// 특정 index로 바로 이동
     /// </summary>

@@ -52,6 +52,7 @@ public class GameData : ScriptableObject
             return _instance;
         }
     }
+
     /************************************************************
     * [√©≈Õ µ•¿Ã≈Õ]
     * 

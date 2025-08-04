@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -11,9 +10,6 @@ public class KeyRebinding : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textField;
 
     [SerializeField]
-    private bool is2DVector; <- 이거 안 사용하게
-
-    [SerializeField]
     [OnValueChanged(nameof(OnActionChanged))]
     [ValueDropdown(nameof(GetActions))]
     private string actionName;
@@ -24,9 +20,11 @@ public class KeyRebinding : MonoBehaviour
     private string schemeName;
 
     [SerializeField]
-    [ShowIf(nameof(is2DVector), true)]
+    [ShowIf(nameof(hasBinding), true)]
     [ValueDropdown(nameof(GetBindings))]
     private string bindingName;
+
+    private bool hasBinding;
 
     private InputActionRebindingExtensions.RebindingOperation rebindOperation;
     private InputAction action;
@@ -35,6 +33,7 @@ public class KeyRebinding : MonoBehaviour
     private void OnValidate()
     {
         UpdateDisplayName();
+        UpdateHasBinding();
     }
 
     private ValueDropdownList<string> GetActions()
@@ -74,7 +73,7 @@ public class KeyRebinding : MonoBehaviour
     {
         var list = new ValueDropdownList<string>();
 
-        if (action == null || !is2DVector) return list;
+        if (action == null || !hasBinding) return list;
 
         // 해당 action에 바인딩된 것들 수집
         for (int i = 0; i < action.bindings.Count; i++)
@@ -94,6 +93,15 @@ public class KeyRebinding : MonoBehaviour
     {
         // Action 값이 바뀌면 binding 값도 리셋
         bindingName = string.Empty;
+
+        // binding 필요 여부 검사
+        UpdateHasBinding();
+    }
+
+    private void UpdateHasBinding()
+    {
+        // binding 필요 여부 업데이트
+        hasBinding = FindRuntimeAction(actionName).bindings.Any(b => b.isPartOfComposite);
     }
 #endif
 
@@ -108,7 +116,7 @@ public class KeyRebinding : MonoBehaviour
         if (action == null) return;
 
         var bindings = action.bindings.ToList();
-        int bindingIndex = is2DVector ? bindings.FindIndex(b => b.isPartOfComposite && b.name == bindingName)
+        int bindingIndex = hasBinding ? bindings.FindIndex(b => b.isPartOfComposite && b.name == bindingName)
                             : bindings.FindIndex(b => !b.isPartOfComposite && !b.isComposite);
 
         // 리바인딩할 키를 찾을 수 없으면 무시
@@ -151,6 +159,7 @@ public class KeyRebinding : MonoBehaviour
         // 액션값 할당
         action = FindRuntimeAction(actionName);
 
+        // 액션값을 못찾은 경우 빈 값 할당
         if (action == null)
         {
             textField.text = "";
@@ -158,8 +167,28 @@ public class KeyRebinding : MonoBehaviour
         }
 
         var bindings = action.bindings.ToList();
-        int index = !is2DVector ? bindings.FindIndex(b => !b.isComposite && !b.isPartOfComposite)
-                        : bindings.FindIndex(b => b.isPartOfComposite && b.name == bindingName);
+        int index = -1;
+
+        if (!hasBinding)
+        {
+            // 단일 바인딩 중 현재 scheme에 속한 것만 선택
+            index = bindings.FindIndex(b =>
+                !b.isComposite &&
+                !b.isPartOfComposite &&
+                b.groups != null &&
+                b.groups.Contains(schemeName)
+            );
+        }
+        else
+        {
+            // composite 바인딩 중에서 선택된 bindingName과 일치하고 scheme에 속하는 것만 선택
+            index = bindings.FindIndex(b =>
+                b.isPartOfComposite &&
+                b.name == bindingName &&
+                b.groups != null &&
+                b.groups.Contains(schemeName)
+            );
+        }
 
         // 값을 찾지 못했다면 빈 값 할당
         if (index == -1)

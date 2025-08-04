@@ -188,6 +188,14 @@ public class OptionData : ScriptableObject
     private bool _initHasGlasses;
     public bool InitHasGlasses => _initHasGlasses;
 
+    [SerializeField]
+    private Difficulty _difficulty;
+    public Difficulty Difficulty
+    {
+        get => _difficulty;
+        set => _difficulty = value;
+    }
+
     /************************************************************
     * [기타 데이터]
     * 
