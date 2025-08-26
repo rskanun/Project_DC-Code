@@ -1,27 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-
-
+using Sirenix.OdinInspector;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class TextScriptResource : ScriptableObject
+public class TextScriptManager : ScriptableObject
 {
     private const string FILE_DIRECTORY = "Assets/Resources/Scenario";
-    private const string TEXT_SCRIPT_DIRECTORY = "Assets/Resources/Scenario/TextScript";
-    private const string FILE_PATH = "Assets/Resources/Scenario/ScriptResource.asset";
+    private const string FILE_PATH = "Assets/Resources/Scenario/ScriptManager.asset";
 
-    private static TextScriptResource _instance;
-    public static TextScriptResource Instance
+    private static TextScriptManager _instance;
+    public static TextScriptManager Instance
     {
         get
         {
             if (_instance != null) return _instance;
 
-            _instance = Resources.Load<TextScriptResource>("Scenario/ScriptResource");
+            _instance = Resources.Load<TextScriptManager>("Scenario/ScriptManager");
 
 #if UNITY_EDITOR
             if (_instance == null)
@@ -44,11 +42,11 @@ public class TextScriptResource : ScriptableObject
                 }
 
                 // Resource.Load가 실패했을 경우
-                _instance = AssetDatabase.LoadAssetAtPath<TextScriptResource>(FILE_PATH);
+                _instance = AssetDatabase.LoadAssetAtPath<TextScriptManager>(FILE_PATH);
 
                 if (_instance == null)
                 {
-                    _instance = CreateInstance<TextScriptResource>();
+                    _instance = CreateInstance<TextScriptManager>();
                     AssetDatabase.CreateAsset(_instance, FILE_PATH);
                 }
             }
@@ -57,6 +55,10 @@ public class TextScriptResource : ScriptableObject
             return _instance;
         }
     }
+
+    [SerializeField]
+    [FolderPath(RequireExistingPath = true)]
+    private string scriptsDirectory;
 
     private Stack<Select> selectStack = new Stack<Select>();
 
@@ -95,7 +97,7 @@ public class TextScriptResource : ScriptableObject
         string folderName = chapter.ToString() + root.ToString()
             + ((subChapter < 10) ? "0" : "") + subChapter.ToString();
 
-        string path = TEXT_SCRIPT_DIRECTORY + "/" + folderName;
+        string path = scriptsDirectory + "/" + folderName;
 
         return path;
     }

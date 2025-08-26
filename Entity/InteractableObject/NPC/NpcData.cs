@@ -23,9 +23,9 @@ public class NpcData
             if (_lines != null) return _lines;
 
             // 해당 npc의 id에 해당하는 대사가 존재할 경우에만 담기
-            if (TextScriptResource.Instance.HasNpcLines(_id))
+            if (TextScriptManager.Instance.HasNpcLines(_id))
             {
-                _lines = TextScriptResource.Instance.GetNpcLines(_id);
+                _lines = TextScriptManager.Instance.GetNpcLines(_id);
             }
 
             return _lines;

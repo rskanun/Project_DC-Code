@@ -197,7 +197,7 @@ public class TalkManager : MonoBehaviour
         if (quest == null)
             return null;
 
-        return TextScriptResource.Instance.GetQuestLines(quest.ID, state);
+        return TextScriptManager.Instance.GetQuestLines(quest.ID, state);
     }
 
     /************************************************************

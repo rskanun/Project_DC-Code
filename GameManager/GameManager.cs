@@ -5,11 +5,11 @@ using UnityEngine.Localization.Settings;
 
 public class GameManager : MonoBehaviour
 {
-    private TextScriptResource scriptResource;
+    private TextScriptManager scriptResource;
 
     private void Awake()
     {
-        scriptResource = TextScriptResource.Instance;
+        scriptResource = TextScriptManager.Instance;
     }
 
     private void Start()
