@@ -17,6 +17,7 @@ public class OptionToggle : MonoBehaviour
     // 해당 토글이 가지는 오브젝트값 정보
     [SerializeField, HideInInspector]
     private string _value;
+    public string Value => _value;
 
     [ShowInInspector, LabelText("Object Value")]
     [ShowIf(nameof(ShowDropdown))]
@@ -35,7 +36,6 @@ public class OptionToggle : MonoBehaviour
         private set => _value = value;
     }
 
-    public string Value => _value;
     public bool isOn => toggle.isOn;
 
 #if UNITY_EDITOR
@@ -47,7 +47,8 @@ public class OptionToggle : MonoBehaviour
 
     private bool ShowInputField()
     {
-        return !ShowDropdown();
+        var type = toggleManager?.ValueType;
+        return type != null && !ShowDropdown();
     }
 
     /// <summary>

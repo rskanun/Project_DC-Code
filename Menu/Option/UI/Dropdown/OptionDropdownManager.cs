@@ -16,6 +16,8 @@ public abstract class OptionDropdownManager<T> : SerializedMonoBehaviour
         public string value;
     }
     [SerializeField] private TMP_Dropdown dropdown;
+    [SerializeField]
+    [TableList, PropertyOrder(1)]
     protected List<DropOption> dropOptions;
 
     [SerializeField, PropertyOrder(100)]
