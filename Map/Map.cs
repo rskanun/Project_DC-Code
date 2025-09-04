@@ -38,11 +38,6 @@ public class Map : MonoBehaviour
     private bool _isAbyss;
     public bool IsAbyss => _isAbyss;
 
-    private void Reset()
-    {
-        RecreateID();
-    }
-
     private void OnEnable()
     {
         // 게임 플레이 내에서만 동작

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TextUI : MonoBehaviour
+public class DialogueUI : MonoBehaviour
 {
     private bool isPrinting;
     private string currentText;

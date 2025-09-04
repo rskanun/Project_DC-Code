@@ -6,7 +6,7 @@ public class TalkManager : MonoBehaviour
 {
     [Header("참조 스크립트")]
     [SerializeField] private TalkController controller;
-    [SerializeField] private TextManager textManager;
+    [SerializeField] private DialogueManager textManager;
     [SerializeField] private SelectManager selectManager;
     [SerializeField] private EventManager eventManager;
     [SerializeField] private PlayerController playerController;
@@ -21,7 +21,7 @@ public class TalkManager : MonoBehaviour
     // Select 관련 변수
     private Stack<Select> selectStack;
 
-    public void OnTalkHandler()
+    public void TalkHandler()
     {
         if (isTalking)
         {
@@ -47,6 +47,11 @@ public class TalkManager : MonoBehaviour
         }
     }
 
+    private void NextTalk()
+    {
+        isPrinting = false;
+    }
+
     public void StartTalk(Npc npc)
     {
         // 플레이어 조작 컨트롤러 비활성화
@@ -69,10 +74,10 @@ public class TalkManager : MonoBehaviour
     private void CheckToQuest(Npc npc)
     {
         // 완료할 퀘스트가 있는 경우 완료
-        if (!TryCompleteQuest(npc, out QuestData completeQuest))
+        if (!TryCompleteQuest(npc, out _))
         {
             // 수주할 퀘스트가 있는 경우 수주
-            TryAcceptQuest(npc, out QuestData acceptQuest);
+            TryAcceptQuest(npc, out _);
         }
     }
 
@@ -111,60 +116,48 @@ public class TalkManager : MonoBehaviour
 
         isTalking = true;
 
-        while (lineNum < lines.Count)
+        while (lines != null && lines.Count > 0)
         {
-            // 대사 출력
-            PrintLine(lines[lineNum]);
+            // 대사 하나하나 출력
+            for (lineNum = 0; lineNum < lines.Count; lineNum++)
+            {
+                PrintLine(lines[lineNum]);
 
-            // 대사를 출력하는 동안 대기
-            yield return new WaitUntil(() => !isPrinting);
+                // 대사를 출력하는 동안 대기
+                yield return new WaitWhile(() => isPrinting);
 
-            // 다음 대사 출력
-            lineNum++;
+            }
+
+            // 다음 이어질 대사가 있는 지 확인
+            lines = GetNextLines(npc);
         }
 
         // 대사를 모두 읽었다면 대사 출력 멈추기
-        EndLines(npc);
+        EndTalk();
     }
 
-    private void NextTalk()
+    private List<Line> GetNextLines(Npc npc)
     {
-        isPrinting = false;
-    }
-
-    private void EndLines(Npc npc)
-    {
-        // 대사 읽기에 쓰이는 변수 초기화
-        isPrinting = false;
-        isTalking = false;
-        lineNum = 0;
-
         // 수주 가능한 퀘스트 확인
         if (TryAcceptQuest(npc, out QuestData acceptQuest))
         {
-            // 해당 퀘스트 수락 대화 시작
-            List<Line> lines = GetQuestLines(acceptQuest, QuestState.ACCEPTABLE);
-            StartCoroutine(ReadLines(npc, lines));
+            return GetQuestLines(acceptQuest, QuestState.ACCEPTABLE);
         }
 
         // 완료 가능한 퀘스트 확인
-        else if (TryCompleteQuest(npc, out QuestData completeQuest))
+        if (TryCompleteQuest(npc, out QuestData completeQuest))
         {
-            // 해당 퀘스트 완료 대화 시작
-            List<Line> lines = GetQuestLines(completeQuest, QuestState.COMPLETABLE);
-            StartCoroutine(ReadLines(npc, lines));
+            return GetQuestLines(completeQuest, QuestState.COMPLETABLE);
         }
 
-        // 완료 및 수주 가능한 퀘스트가 없는 경우
-        else
-        {
-            // 더 진행할 대화가 없어 끝내기
-            EndTalk();
-        }
+        // 이어질 퀘스트 대화가 없으면 null을 반환
+        return null;
     }
 
     private void EndTalk()
     {
+        isTalking = false;
+
         // 대화창 UI 끄기
         textManager.CloseDialogue();
 

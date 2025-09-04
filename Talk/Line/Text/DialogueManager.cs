@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-public class TextManager : MonoBehaviour
+public class DialogueManager : MonoBehaviour
 {
     [Header("참조 스크립트")]
-    [SerializeField] private TextUI ui;
+    [SerializeField] private DialogueUI ui;
 
     public bool IsPrinting => ui.IsPrinting;
 

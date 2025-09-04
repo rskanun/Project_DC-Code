@@ -31,6 +31,6 @@ public class TalkController : Controller
 
     private void OnSubmitKeyPressed(InputAction.CallbackContext context)
     {
-        talkManager.OnTalkHandler();
+        talkManager.TalkHandler();
     }
 }
