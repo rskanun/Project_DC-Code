@@ -22,11 +22,8 @@ public class NpcData
         {
             if (_lines != null) return _lines;
 
-            // 해당 npc의 id에 해당하는 대사가 존재할 경우에만 담기
-            if (TextScriptManager.Instance.HasNpcLines(_id))
-            {
-                _lines = TextScriptManager.Instance.GetNpcLines(_id);
-            }
+            // 해당 npc의 id에 해당하는 대사 찾아서 담기
+            _lines = TextScriptResource.Instance.GetNpcLines(_id);
 
             return _lines;
         }

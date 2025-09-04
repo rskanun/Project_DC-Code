@@ -196,7 +196,7 @@ public class TextScriptManager : ScriptableObject
             return currentScript.ContainsKey(id);
 
         // id값이 0보다 작으면 
-        else return false;
+        return false;
     }
 
     private int GetScenarioNumByNpc(int npcID)
