@@ -74,12 +74,8 @@ public class MapDatabase : ScriptableObject
     [ContextMenu("Reload")]
     public void ReloadMaps()
     {
-        // 현재 열려있는 씬 경로 저장
-        List<string> openScenes = new List<string>();
-        for (int i = 0; i < SceneManager.sceneCount; i++)
-        {
-            openScenes.Add(SceneManager.GetSceneAt(i).path);
-        }
+        // 현재 하이어리키 창에 있는 씬 상태 저장
+        SceneSetup[] setup = EditorSceneManager.GetSceneManagerSetup();
 
         // 방문 씬 및 맵 데이터 초기화
         var visitedScenes = new HashSet<string>();
@@ -128,15 +124,8 @@ public class MapDatabase : ScriptableObject
             }
         }
 
-        // 본래 열려있던 씬 열기
-        if (openScenes.Count > 0)
-        {
-            EditorSceneManager.OpenScene(openScenes[0], OpenSceneMode.Single);
-            for (int i = 1; i < openScenes.Count; i++)
-            {
-                EditorSceneManager.OpenScene(openScenes[i], OpenSceneMode.Additive);
-            }
-        }
+        // 본래 상태 되돌리기
+        EditorSceneManager.RestoreSceneManagerSetup(setup);
 
         Debug.Log("맵 리로드 완료!");
     }
