@@ -65,7 +65,7 @@ public class QuestDatabase : ScriptableObject
 
 #if UNITY_EDITOR
     [Button(ButtonSizes.Large)]
-    public void LoadMapAssets()
+    public void LoadQuestAssets()
     {
         // 폴더가 없는 경우 찾기 종료
         if (!AssetDatabase.IsValidFolder(filePath)) return;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MapManager
+public static class MapManager
 {
     // #초기 맵 이름
     // #추후 게임 시작 시 세겨지도록 변경 예정

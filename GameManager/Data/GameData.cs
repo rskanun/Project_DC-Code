@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+
 
 
 #if UNITY_EDITOR
@@ -124,6 +126,7 @@ public class GameData : ScriptableObject
         get => _currentQuest;
         set => _currentQuest = value;
     }
+    [NonSerialized]
     private List<int> _completedQuests = new List<int>();
     public List<int> CompletedQuests
     {

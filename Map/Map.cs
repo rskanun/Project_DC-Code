@@ -50,7 +50,7 @@ public class Map : MonoBehaviour
         GameEventManager.Instance.NotifyMapUpdate();
     }
 
-    public string CreateID()
+    private string CreateID()
     {
         // 앞의 12자리는 생성 시간 값의 16진수 변환 값
         string timeBaseHex = DateTime.UtcNow.Ticks.ToString("x").Substring(0, 12);

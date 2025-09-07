@@ -47,7 +47,7 @@ public class CsvFile : IEnumerable<string[]>
     }
 }
 
-public class CsvReader
+public static class CsvReader
 {
     public static List<CsvFile> ReadFiles(string folderPath)
     {
